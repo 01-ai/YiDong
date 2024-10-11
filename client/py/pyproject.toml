@@ -2,13 +2,15 @@
 name = "yidong"
 version = "0.1.0"
 description = ""
-authors = ["Jun Tian <tianjun.cpp@gmail.com>"]
+authors = ["Yi Team <yi@01.ai>"]
 license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-gradio = "5.0.0-beta.1"
+httpx = "^0.27.2"
+pydantic = "^2.9.2"
+pydantic-settings = "^2.5.2"
 
 
 [build-system]
