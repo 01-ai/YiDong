@@ -2,6 +2,7 @@ import mimetypes
 import os
 
 import httpx
+from jsonargparse import CLI
 from yidong.config import CONFIG
 from yidong.model import ResourceBase, ResourceUploadResponse, ResourceUrlResponse
 
@@ -56,3 +57,11 @@ class YiDong:
 
     def delete_resource(self, rid: str) -> None:
         self._client.delete(f"/resource/{rid}")
+
+
+def main():
+    print(CLI(YiDong))
+
+
+if __name__ == "__main__":
+    main()
