@@ -33,6 +33,7 @@ class YiDong:
                     f"/resource",
                     content=f,
                     headers={"Content-Type": content_type},
+                    params={"file": file},
                 )
                 if r.status_code == 307:
                     f.seek(0)
