@@ -4,7 +4,14 @@ import os
 import httpx
 from jsonargparse import CLI
 from yidong.config import CONFIG
-from yidong.model import ResourceBase, ResourceUploadResponse, ResourceUrlResponse
+from yidong.model import (
+    ResourceBase,
+    ResourceUploadResponse,
+    ResourceUrlResponse,
+    Task,
+    TaskContainer,
+    TaskInfo,
+)
 
 
 class YiDong:
@@ -57,6 +64,18 @@ class YiDong:
 
     def delete_resource(self, rid: str) -> None:
         self._client.delete(f"/resource/{rid}")
+
+    def submit_task(self, t: Task) -> str:
+        resp = self._client.post("/task", json=t.dict())
+        return TaskInfo.parse_obj(resp.json()).id
+
+    def list_task(self) -> list[str]:
+        resp = self._client.get("/task")
+        return resp.json()
+
+    def get_task(self, tid: str) -> TaskContainer:
+        resp = self._client.get(f"/task/{tid}")
+        return TaskContainer.parse_obj(resp.json())
 
 
 def main():
