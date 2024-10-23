@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Annotated, Literal, Union
+from typing import Annotated, Any, Generic, Literal, TypeVar, Union
 
 from pydantic import BaseModel, Field
 
@@ -8,52 +8,103 @@ class ResourceUploadResponse(BaseModel):
     id: str
 
 
+class ResourceFromLocalUpload(BaseModel):
+    type: Literal["local_upload"] = "local_upload"
+    path: str | None = None
+
+
+class ResourceFromRemoteDownload(BaseModel):
+    type: Literal["remote_download"] = "remote_download"
+    url: str
+
+
+class ResourceFromTask(BaseModel):
+    type: Literal["task"] = "task"
+    task_id: str
+
+
+ResourceSource = Annotated[
+    Union[
+        ResourceFromLocalUpload,
+        ResourceFromRemoteDownload,
+        ResourceFromTask,
+    ],
+    Field(discriminator="type"),
+]
+
+
 class ResourceBase(BaseModel):
     id: str
     mime: str
-    name: str = ""
+    name: str
+    source: ResourceSource
     uploaded_at: str
-    created_at: str | None = None
-    updated_at: str | None = None
-    meta: dict | None = None
+    created_at: str | None
+    updated_at: str | None
+    meta: dict | None
 
 
 class ResourceUrlResponse(BaseModel):
     url: str
 
 
-#####
+class Reply(BaseModel):
+    code: int
+    message: str
+    data: Any
 
 
 class TaskInfo(BaseModel):
     id: str
 
 
+T = TypeVar("T")
+
+
+class Pagination(BaseModel, Generic[T]):
+    page: int
+    page_size: int
+    total: int
+    list: list[T]
+
+
+class Chapter(BaseModel):
+    start: float
+    stop: float
+
+
+class Summary(BaseModel):
+    summary: str
+    meta: dict = {}
+
+
+#####
+
+
 class PingTask(BaseModel):
     type: Literal["ping"] = "ping"
 
 
-class VideoSummaryTask(BaseModel):
+class PingTaskResult(BaseModel):
     type: Literal["ping"] = "ping"
+
+
+class VideoSummaryTask(BaseModel):
+    type: Literal["video_summary"] = "video_summary"
     video_id: str
+    prompt: str | None = None
+    chapters: list[Chapter] = []
+
+
+class VideoSummaryTaskResult(BaseModel):
+    type: Literal["video_summary"] = "video_summary"
+    summaries: list[Summary]
 
 
 Task = Annotated[
     Union[PingTask, VideoSummaryTask],
     Field(discriminator="type"),
 ]
-
-
-#####
-
-
-class PingTaskResult(BaseModel):
-    type: str = "ping"
-
-
-class VideoSummaryTaskResult(BaseModel):
-    type: str = "ping"
-
 
 TaskResult = Annotated[
     Union[
@@ -83,5 +134,5 @@ class TaskRecord(BaseModel):
 class TaskContainer(BaseModel):
     id: str
     task: Task
-    result: TaskResult | None = None
-    records: list[TaskRecord] = []
+    result: TaskResult | None
+    records: list[TaskRecord]
