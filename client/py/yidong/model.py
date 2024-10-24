@@ -93,16 +93,59 @@ class VideoSummaryTask(BaseModel):
     type: Literal["video_summary"] = "video_summary"
     video_id: str
     prompt: str | None = None
-    chapters: list[Chapter] = []
+    chapter_prompt: str | None = None
+    chapters: list[Chapter] | None = None
 
 
 class VideoSummaryTaskResult(BaseModel):
     type: Literal["video_summary"] = "video_summary"
-    summaries: list[Summary]
+    video_id: str
+    video_summary: Summary | None
+    chapters: list[Chapter]
+    chapter_summaries: list[Summary | None]
+
+
+class GenScriptElement(BaseModel):
+    video_id: str
+    video_summary: Summary
+    chapters: list[Chapter]
+    chapter_summaries: list[Summary]
+
+
+class GenScriptTask(BaseModel):
+    type: Literal["gen_script"] = "gen_script"
+    collection: list[GenScriptElement]
+    remix_s1_prompt: str
+    remix_s2_prompt: str
+
+
+class GenScriptTaskResultElement(BaseModel):
+    video_id: str
+    chapter: Chapter
+    data: dict
+
+
+class GenScriptTaskResult(BaseModel):
+    type: Literal["gen_script"] = "gen_script"
+    styles: list[list[GenScriptTaskResultElement]]
+
+
+class VideoMashupTask(BaseModel):
+    type: Literal["video_mashup"] = "video_mashup"
+    video_ids: list[str]
+    chapters: list[Chapter]
+    voice_overs: list[str]
+    bgm_id: str
+    voice_style_id: str
+
+
+class VideoMashupTaskResult(BaseModel):
+    type: Literal["video_mashup"] = "video_mashup"
+    video_id: str
 
 
 Task = Annotated[
-    Union[PingTask, VideoSummaryTask],
+    Union[PingTask, VideoSummaryTask, GenScriptTask, VideoMashupTask],
     Field(discriminator="type"),
 ]
 
@@ -110,6 +153,8 @@ TaskResult = Annotated[
     Union[
         PingTaskResult,
         VideoSummaryTaskResult,
+        GenScriptTaskResult,
+        VideoMashupTaskResult,
     ],
     Field(discriminator="type"),
 ]
