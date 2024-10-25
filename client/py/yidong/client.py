@@ -1,23 +1,24 @@
 import mimetypes
 import os
-from datetime import datetime
-from time import sleep
 from typing import Iterable
 
 import httpx
+import rich
 from jsonargparse import CLI
+from pydantic import ValidationError
 from yidong.config import CONFIG
+from yidong.exception import YDError
 from yidong.model import (
     Pagination,
     Reply,
-    ResourceBase,
+    Resource,
     ResourceUploadResponse,
-    ResourceUrlResponse,
+    T,
     Task,
     TaskContainer,
     TaskInfo,
-    TaskResult,
 )
+from yidong.util import TaskRef
 
 
 class YiDong:
@@ -31,6 +32,7 @@ class YiDong:
 
     def _request(
         self,
+        T: type[T],
         method: str,
         path: str,
         *,
@@ -38,7 +40,7 @@ class YiDong:
         payload: dict | None = None,
         headers: dict | None = None,
         content: str | bytes | Iterable[bytes] | None = None,
-    ):
+    ) -> T:
         resp = self._client.request(
             method=method,
             url=path,
@@ -47,8 +49,14 @@ class YiDong:
             headers=headers,
             content=content,
         )
-        # TODO: handle err code
-        reply = Reply.parse_obj(resp.json())
+        try:
+            payload = resp.json()
+            reply = Reply[T].parse_obj(payload)
+        except ValidationError as e:
+            raise YDError(1, str(e), payload)
+
+        if reply.code != 0:
+            raise YDError(reply.code, reply.message, reply.data)
         return reply.data
 
     def add_resource(self, file: str, content_type: str | None = None) -> str:
@@ -77,59 +85,36 @@ class YiDong:
         else:
             raise FileNotFoundError(f"File not found: {file}")
 
-    def list_resource(self) -> Pagination[ResourceBase]:
-        return Pagination[ResourceBase].parse_obj(self._request("get", "/resource"))
+    def list_resource(self) -> Pagination[Resource]:
+        return self._request(Pagination[Resource], "get", "/resource")
 
-    def update_resource(self, rid: str, name: str | None = None):
-        return self._request("patch", f"/resource/{rid}", payload={"name": name})
+    def update_resource(self, rid: str, name: str | None = None) -> Resource:
+        return self._request(
+            Resource, "patch", f"/resource/{rid}", payload={"name": name}
+        )
 
-    def get_resource(self, rid: str) -> ResourceBase:
-        return ResourceBase.parse_obj(self._request("get", f"/resource/{rid}"))
-
-    def get_resource_url(self, rid: str, is_public: bool = True) -> str:
-        return ResourceUrlResponse.parse_obj(
-            self._request(
-                "get", f"/resource/{rid}/url", params={"is_public": is_public}
-            )
-        ).url
+    def get_resource(self, rid: str) -> Resource:
+        return self._request(Resource, "get", f"/resource/{rid}")
 
     def delete_resource(self, rid: str) -> None:
-        self._request("delete", f"/resource/{rid}")
+        self._request(bool, "delete", f"/resource/{rid}")
 
-    def submit_task(self, t: Task) -> str:
-        return TaskInfo.parse_obj(self._request("post", "/task", payload=t.dict())).id
+    def submit_task(self, t: Task) -> TaskRef:
+        tid = self._request(TaskInfo, "post", "/task", payload=t.dict()).id
+        return TaskRef(self, tid)
 
     def list_task(self) -> Pagination[TaskContainer]:
-        return Pagination[TaskContainer].parse_obj(self._request("get", "/task"))
+        return self._request(Pagination[TaskContainer], "get", "/task")
 
     def get_task(self, tid: str) -> TaskContainer:
-        return TaskContainer.parse_obj(self._request("get", f"/task/{tid}"))
-
-    def get_task_result(
-        self, tid: str, poll_interval: float = 1.0, timeout: float = 0
-    ) -> TaskResult:
-        start = datetime.now()
-        while True:
-            t = self.get_task(tid)
-            if t.records:
-                print(
-                    f"{tid}\t{t.records[-1].time}\t{t.records[-1].type}\t{t.records[-1].message}"
-                )
-            if t.result is not None:
-                return t.result
-            now = datetime.now()
-            if timeout > 0 and (now - start).total_seconds() > timeout:
-                raise TimeoutError(
-                    f"failed to fetch task [{tid}] result within {timeout} seconds"
-                )
-            sleep(poll_interval)
+        return self._request(TaskContainer, "get", f"/task/{tid}")
 
     def delete_task(self, tid: str) -> bool:
-        return self._request("delete", f"/task/{tid}")
+        return self._request(bool, "delete", f"/task/{tid}")
 
 
 def main():
-    print(CLI(YiDong))
+    rich.print(CLI(YiDong))
 
 
 if __name__ == "__main__":

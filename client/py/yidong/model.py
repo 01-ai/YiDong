@@ -1,7 +1,9 @@
 from enum import Enum
-from typing import Annotated, Any, Generic, Literal, TypeVar, Union
+from typing import Annotated, Generic, Literal, TypeVar, Union
 
 from pydantic import BaseModel, Field
+
+T = TypeVar("T")
 
 
 class ResourceUploadResponse(BaseModel):
@@ -33,7 +35,7 @@ ResourceSource = Annotated[
 ]
 
 
-class ResourceBase(BaseModel):
+class Resource(BaseModel):
     id: str
     mime: str
     name: str
@@ -41,24 +43,27 @@ class ResourceBase(BaseModel):
     uploaded_at: str
     created_at: str | None
     updated_at: str | None
-    meta: dict | None
+    meta: dict | None = Field(repr=False)
+
+    def __getitem__(self, key):
+        if self.meta:
+            return self.meta[key]
+        else:
+            raise KeyError(key)
 
 
 class ResourceUrlResponse(BaseModel):
     url: str
 
 
-class Reply(BaseModel):
+class Reply(BaseModel, Generic[T]):
     code: int
     message: str
-    data: Any
+    data: T
 
 
 class TaskInfo(BaseModel):
     id: str
-
-
-T = TypeVar("T")
 
 
 class Pagination(BaseModel, Generic[T]):
@@ -66,6 +71,12 @@ class Pagination(BaseModel, Generic[T]):
     page_size: int
     total: int
     list: list[T]
+
+    def __iter__(self):
+        return self.list
+
+    def __getitem__(self, i) -> T:
+        return self.list[i]
 
 
 class Chapter(BaseModel):
