@@ -59,7 +59,7 @@ class YiDong:
             raise YDError(reply.code, reply.message, reply.data)
         return reply.data
 
-    def add_resource(self, file: str, content_type: str | None = None) -> str:
+    def add_resource(self, file: str, content_type: str | None = None) -> Resource:
         if os.path.exists(file):
             if content_type is None:
                 content_type, _ = mimetypes.guess_type(file)
@@ -79,9 +79,9 @@ class YiDong:
                         content=f,
                         headers={"Content-Type": content_type},
                     )
-                res = ResourceUploadResponse.parse_obj(r.json())
-                self.update_resource(res.id, name=os.path.basename(file))
-                return res.id
+                res = Reply[ResourceUploadResponse].parse_obj(r.json())
+                self.update_resource(res.data.id, name=os.path.basename(file))
+                return self.get_resource(res.data.id)
         else:
             raise FileNotFoundError(f"File not found: {file}")
 

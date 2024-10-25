@@ -42,7 +42,7 @@ We provide SDK in the following programming languages:
 3. Upload resources
 
     ```py
-    rid = yd.add_resource("path/to/your/video.mp4")
+    r = yd.add_resource("path/to/your/video.mp4")
     ```
 
     A resource ID will be returned once the upload is completed.
@@ -50,8 +50,8 @@ We provide SDK in the following programming languages:
 4. Perform tasks
 
     ```py
-    tid = yd.submit_task(VideoSummaryTask(video_id=rid))
-    print(yd.get_task_result(tid))
+    t = yd.submit_task(VideoSummaryTask(video_id=r.id))
+    print(t())
     ```
 
 For more examples, please visit the [Gradio Example(TODO: Add Link)]().
@@ -59,5 +59,7 @@ For more examples, please visit the [Gradio Example(TODO: Add Link)]().
 You can also use the command line interface to perform tasks demonstrated above:
 
 ```bash
-# TODO: Add CLI usage
+$ yidong add_resource path/to/your/video.mp4
+
+$ yidong submit_task VideoSummaryTask --video_id YOUR_VIDEO_ID
 ```
