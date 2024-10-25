@@ -12,7 +12,7 @@ class TaskRef:
         self.t: TaskContainer | None = None
 
     def __call__(
-        self, blocking: bool = False, poll_interval: float = 1.0, timeout: float = 0
+        self, blocking: bool = True, poll_interval: float = 1.0, timeout: float = 0
     ) -> TaskResult | None:
         if self.t is None or self.t.result is None:
             if blocking:
@@ -41,14 +41,14 @@ class TaskRef:
 
     @property
     def status(self) -> str:
-        if self.t is None:
+        if self.t is None or self.t.result is None:
             t = self.client.get_task(self.tid)
             self.t = t
 
         return self.t.records[-1].type
 
-    def __str__(self) -> str:
-        return f"TaskRef({self.tid})"
+    def __repr__(self) -> str:
+        return f'TaskRef("{self.tid}")'
 
 
 T = TypeVar("T")
