@@ -47,6 +47,9 @@ class TaskRef:
 
         return self.t.records[-1].type
 
+    def __str__(self) -> str:
+        return f"TaskRef({self.tid})"
+
 
 T = TypeVar("T")
 

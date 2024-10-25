@@ -1,6 +1,6 @@
 # YiDong
 
-> “The difficult thing isn't living with other people, it's understanding them.”
+> "The difficult thing isn't living with other people, it's understanding them."
 > 
 > -- José Saramago, Blindness
 

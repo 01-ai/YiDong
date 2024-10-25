@@ -114,7 +114,7 @@ class YiDong:
 
 
 def main():
-    rich.print(CLI(YiDong))
+    rich.print(CLI(YiDong, as_positional=False))
 
 
 if __name__ == "__main__":

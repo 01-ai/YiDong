@@ -180,11 +180,14 @@ class TaskRecordType(str, Enum):
     success = "success"
     fail = "fail"
 
+    def __repr__(self):
+        return self.value
+
 
 class TaskRecord(BaseModel):
-    message: str = ""
-    type: TaskRecordType
     time: str
+    type: TaskRecordType
+    message: str = ""
 
 
 class TaskContainer(BaseModel):
