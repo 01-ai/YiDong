@@ -44,6 +44,7 @@ class Resource(BaseModel):
     created_at: str | None
     updated_at: str | None
     meta: dict | None
+    url: str = ""
 
     def __getitem__(self, key):
         if self.meta:
