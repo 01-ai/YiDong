@@ -11,7 +11,7 @@ python = "^3.10"
 httpx = "^0.27.2"
 pydantic = "^2.9.2"
 pydantic-settings = "^2.5.2"
-jsonargparse = "^4.33.2"
+jsonargparse = {extras = ["argcomplete", "signatures"], version = "^4.33.2"}
 rich = "^13.9.3"
 
 [tool.poetry.scripts]

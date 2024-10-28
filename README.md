@@ -19,7 +19,6 @@ Make sure you have a valid API key.
 We provide SDK in the following programming languages:
 
 - Python
-- Java
 
 ### Python
 

@@ -43,7 +43,7 @@ class Resource(BaseModel):
     uploaded_at: str
     created_at: str | None
     updated_at: str | None
-    meta: dict | None = Field(repr=False)
+    meta: dict | None
 
     def __getitem__(self, key):
         if self.meta:
@@ -72,11 +72,20 @@ class Pagination(BaseModel, Generic[T]):
     total: int
     list: list[T]
 
-    def __iter__(self):
-        return self.list
-
-    def __getitem__(self, i) -> T:
+    def __getitem__(self, i: int) -> T:
         return self.list[i]
+
+    def __iter__(self):
+        self._i = 0
+        return self
+
+    def __next__(self) -> T:
+        if self._i < len(self.list):
+            x = self.list[self._i]
+            self._i += 1
+            return x
+        else:
+            raise StopIteration()
 
 
 class Chapter(BaseModel):
@@ -160,6 +169,8 @@ Task = Annotated[
     Field(discriminator="type"),
 ]
 
+TaskType = TypeVar("TaskType", bound=Task)
+
 TaskResult = Annotated[
     Union[
         PingTaskResult,
@@ -169,6 +180,8 @@ TaskResult = Annotated[
     ],
     Field(discriminator="type"),
 ]
+
+TaskResultType = TypeVar("TaskResultType", bound=TaskResult)
 
 
 #####
@@ -190,8 +203,8 @@ class TaskRecord(BaseModel):
     message: str = ""
 
 
-class TaskContainer(BaseModel):
+class TaskContainer(BaseModel, Generic[TaskType, TaskResultType]):
     id: str
-    task: Task
-    result: TaskResult | None
+    task: TaskType
+    result: TaskResultType | None
     records: list[TaskRecord]
