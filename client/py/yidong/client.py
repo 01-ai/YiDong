@@ -90,7 +90,6 @@ class YiDong:
                 provide the `content_type` parameter here, you should still set
                 the `Content-Type` header as the default value of `content_type`
                 of `application/octet-stream`.
-
             content_type: The mime content type of the file. If not provided, it
                 will first try to guess the content type from the file
                 extension. If it fails, it will be set to
