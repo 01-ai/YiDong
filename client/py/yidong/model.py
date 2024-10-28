@@ -133,7 +133,7 @@ class GenScriptElement(BaseModel):
 
 
 class GenScriptTask(BaseModel):
-    type: Literal["gen_script"] = "gen_script"
+    type: Literal["video_script"] = "video_script"
     collection: list[GenScriptElement]
     remix_s1_prompt: str
     remix_s2_prompt: str
@@ -146,14 +146,14 @@ class GenScriptTaskResultElement(BaseModel):
 
 
 class GenScriptTaskResult(BaseModel):
-    type: Literal["gen_script"] = "gen_script"
+    type: Literal["video_script"] = "video_script"
     styles: list[list[GenScriptTaskResultElement]]
 
 
 class VideoMashupTask(BaseModel):
     type: Literal["video_mashup"] = "video_mashup"
     video_ids: list[str]
-    chapters: list[Chapter]
+    chapters: list[Chapter] | None
     voice_overs: list[str]
     bgm_id: str
     voice_style_id: str

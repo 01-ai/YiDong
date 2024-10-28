@@ -13,6 +13,9 @@ from yidong.config import CONFIG
 from yidong.exception import YDError
 from yidong.model import (
     Chapter,
+    GenScriptElement,
+    GenScriptTask,
+    GenScriptTaskResult,
     Pagination,
     PingTask,
     PingTaskResult,
@@ -23,6 +26,8 @@ from yidong.model import (
     Task,
     TaskContainer,
     TaskInfo,
+    VideoMashupTask,
+    VideoMashupTaskResult,
     VideoSummaryTask,
     VideoSummaryTaskResult,
 )
@@ -234,6 +239,7 @@ class YiDong:
         return TaskRef[task_type, task_result_type](self, res.id)
 
     def ping(self) -> TaskRef[PingTask, PingTaskResult]:
+        """A simple task to test the health of the server."""
         return self._submit_task(locals())
 
     def video_summary(
@@ -243,6 +249,53 @@ class YiDong:
         chapter_prompt: str | None = None,
         chapters: list[Chapter] | None = None,
     ) -> TaskRef[VideoSummaryTask, VideoSummaryTaskResult]:
+        """
+        Summarize a video with the given video id. By default, the video will be
+        summarized as whole and then divided into chapters and summarize
+        separately. If you want to summarize the whole video only, you can set
+        the `chapters` as an empty list. Or if you want to summarize the video
+        by chapters only, you can set the `prompt` as `None` and configure
+        `chapter_prompt` and/or `chapters`.
+
+        Args:
+            video_id: The video id. prompt: The prompt for the video summary. If
+            not set, a builtin prompt will be used here. chapter_prompt: The
+            prompt for the chapter summary. If not set, it will be the same as
+            `prompt`. chapters: The list of video chapters. If it is not set but
+            `chapter_prompt` is provided, the `chapters` will be extracted
+            automatically.
+
+        """
+        return self._submit_task(locals())
+
+    def video_script(
+        self,
+        collection: list[GenScriptElement],
+        remix_s1_prompt: str,
+        remix_s2_prompt: str,
+    ) -> TaskRef[GenScriptTask, GenScriptTaskResult]:
+        """
+        Generate scripts based on a collection of video summarizations.
+        """
+        return self._submit_task(locals())
+
+    def video_mashup(
+        self,
+        video_ids: list[str],
+        voice_overs: list[str],
+        bgm_id: str,
+        voice_style_id: str,
+        chapters: list[Chapter] | None = None,
+    ) -> TaskRef[VideoMashupTask, VideoMashupTaskResult]:
+        """Create a new video based on the given videos and other elements.
+
+        Args:
+            video_ids: The list of video ids.
+            chapters: The list of chapters. If not provided, the whole video will be used.
+            voice_overs: The list of voice over texts.
+            bgm_id: The background music id. Make sure it exists first.
+            voice_style_id: The voice style id. TODO: enumerate all available styles here.
+        """
         return self._submit_task(locals())
 
 
