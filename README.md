@@ -112,7 +112,7 @@ You can also use the command line interface to perform tasks demonstrated above:
 ```bash
 $ yidong -h
 
-$ yidong add_resource ~/Downloads/a.mp4
+$ yidong add_resource --file ~/Downloads/a.mp4
 # 'b525d791a0a5a023'
 
 $ yidong video_summary b525d791a0a5a023
