@@ -252,20 +252,13 @@ class YiDong:
     ) -> TaskRef[VideoSummaryTask, VideoSummaryTaskResult]:
         """
         Summarize a video with the given video id. By default, the video will be
-        summarized as whole and then divided into chapters and summarize
-        separately. If you want to summarize the whole video only, you can set
-        the `chapters` as an empty list. Or if you want to summarize the video
-        by chapters only, you can set the `prompt` as `None` and configure
-        `chapter_prompt` and/or `chapters`.
+        split into chapters. The summary of each chapter together with the summary of the whole video will be returned.
 
         Args:
-            video_id: The video id. prompt: The prompt for the video summary. If
-            not set, a builtin prompt will be used here. chapter_prompt: The
-            prompt for the chapter summary. If not set, it will be the same as
-            `prompt`. chapters: The list of video chapters. If it is not set but
-            `chapter_prompt` is provided, the `chapters` will be extracted
-            automatically.
-
+            video_id: The video id.
+            prompt: The prompt for the video summary. If not set, a builtin prompt will be used here.
+            chapter_prompt: The prompt for the chapter summary. If not set, it will be the same as `prompt`.
+            chapters: The list of video chapters. If not set, the `chapters` will be extracted automatically.
         """
         return self._submit_task(locals())
 
