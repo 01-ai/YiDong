@@ -206,12 +206,13 @@ class YiDong:
             start = datetime.now()
             while True:
                 t = self._get_task(id)
-                if t.result is not None:
+                if t.is_done():
                     return t
-                if t.records:
-                    print(
-                        f"{id}\t{t.records[-1].time}\t{t.records[-1].type.value}\t{t.records[-1].message}"
-                    )
+                else:
+                    if t.records:
+                        print(
+                            f"{id}\t{t.records[-1].time}\t{t.records[-1].type.value}\t{t.records[-1].message}"
+                        )
                 now = datetime.now()
                 if timeout > 0 and (now - start).total_seconds() > timeout:
                     raise TimeoutError(

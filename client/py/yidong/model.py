@@ -208,3 +208,11 @@ class TaskContainer(BaseModel, Generic[TaskType, TaskResultType]):
     task: TaskType
     result: TaskResultType | None
     records: list[TaskRecord]
+
+    def is_done(self) -> bool:
+        if self.records:
+            return (
+                self.records[-1].type == TaskRecordType.success
+                or self.records[-1].type == TaskRecordType.fail
+            )
+        return False
