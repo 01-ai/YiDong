@@ -12,6 +12,7 @@ from pydantic import TypeAdapter, ValidationError
 from yidong.config import CONFIG
 from yidong.exception import YDError
 from yidong.model import (
+    Chapter,
     Pagination,
     PingTask,
     PingTaskResult,
@@ -22,6 +23,8 @@ from yidong.model import (
     Task,
     TaskContainer,
     TaskInfo,
+    VideoSummaryTask,
+    VideoSummaryTaskResult,
 )
 from yidong.util import PaginationIter, TaskRef
 
@@ -87,6 +90,7 @@ class YiDong:
                 provide the `content_type` parameter here, you should still set
                 the `Content-Type` header as the default value of `content_type`
                 of `application/octet-stream`.
+
             content_type: The mime content type of the file. If not provided, it
                 will first try to guess the content type from the file
                 extension. If it fails, it will be set to
@@ -216,10 +220,10 @@ class YiDong:
     def delete_task(self, tid: str) -> bool:
         return self._request(bool, "delete", f"/task/{tid}")
 
-    def _submit_task(self, payload: dict = locals()) -> TaskRef:
+    def _submit_task(self, payload: dict) -> TaskRef:
         caller = inspect.currentframe().f_back.f_code.co_name
         task_type, task_result_type = get_args(
-            inspect.signature(payload[caller]).return_annotation
+            inspect.signature(getattr(self, caller)).return_annotation
         )
         payload = payload | {"type": caller}
         res = self._request(
@@ -231,7 +235,16 @@ class YiDong:
         return TaskRef[task_type, task_result_type](self, res.id)
 
     def ping(self) -> TaskRef[PingTask, PingTaskResult]:
-        return self._submit_task()
+        return self._submit_task(locals())
+
+    def video_summary(
+        self,
+        video_id: str,
+        prompt: str | None = None,
+        chapter_prompt: str | None = None,
+        chapters: list[Chapter] | None = None,
+    ) -> TaskRef[VideoSummaryTask, VideoSummaryTaskResult]:
+        return self._submit_task(locals())
 
 
 def main():

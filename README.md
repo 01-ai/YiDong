@@ -41,24 +41,82 @@ We provide SDK in the following programming languages:
 3. Upload resources
 
     ```py
-    r = yd.add_resource("path/to/your/video.mp4")
+    rid = yd.add_resource("path/to/your/video.mp4")
+    # "b525d791a0a5a023"
     ```
 
-    A resource ID will be returned once the upload is completed.
+    A resource ID will be returned once the upload is completed. Then you can fetch the resource details:
+
+    ```py
+    yd.get_resource(rid)
+
+    # Resource(
+    #     id='b525d791a0a5a023',
+    #     mime='video/mp4',
+    #     name='a.mp4',
+    #     source=ResourceFromLocalUpload(type='local_upload', path='~/Downloads/a.mp4'),
+    #     uploaded_at='2024-10-25T18:23:13.021277',
+    #     created_at='2024-10-25T18:23:14.204159',
+    #     updated_at='2024-10-25T18:23:15.163147',
+    #     url='https://...',
+    #     meta={...}
+    # )
+    ```
 
 4. Perform tasks
 
     ```py
-    t = yd.submit_task(VideoSummaryTask(video_id=r.id))
-    print(t())
+    t = yd.video_summary('b525d791a0a5a023')
+    # TaskRef("e5622d45e5ad41bfa961b09c0b84835b")
     ```
 
+    A task reference will be returned immediately. To fetch the task result:
+
+    ```py
+    t()
+    # VideoSummaryTaskResult(
+    #     type='video_summary',
+    #     video_id='e24bb328df3a5bb9',
+    #     video_summary=Summary(
+    #         summary='...',
+    #         meta={}
+    #     ),
+    #     chapters=[Chapter(start=0.0, stop=10.0), Chapter(start=10.0, stop=13.0)],
+    #     chapter_summaries=[
+    #         Summary(
+    #             summary='...',
+    #             meta={}
+    #         ),
+    #         Summary(
+    #             summary='...',
+    #             meta={}
+    #         )
+    #     ]
+    # )
+    ```
+
+    If you have a webhook set up, you will receive a notification once the task is completed. (TODO: verify this)
+
+    You may find all available tasks in the docs(TODO: setup docs).
+
+5. Live interaction
+
+    (TODO: Add chat interface)
+
 For more examples, please visit the [Gradio Example(TODO: Add Link)]().
+
+#### CLI
 
 You can also use the command line interface to perform tasks demonstrated above:
 
 ```bash
-$ yidong add_resource path/to/your/video.mp4
+$ yidong -h
 
-$ yidong submit_task VideoSummaryTask --video_id YOUR_VIDEO_ID
+$ yidong add_resource ~/Downloads/a.mp4
+# 'b525d791a0a5a023'
+
+$ yidong video_summary b525d791a0a5a023
+# TaskRef("e5622d45e5ad41bfa961b09c0b84835b")
+
+$ yidong get_task e5622d45e5ad41bfa961b09c0b84835b
 ```
