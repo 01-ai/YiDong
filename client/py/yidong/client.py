@@ -12,6 +12,10 @@ from pydantic import TypeAdapter, ValidationError
 from yidong.config import CONFIG
 from yidong.exception import YDError
 from yidong.model import (
+    Chapter,
+    GenScriptElement,
+    GenScriptTask,
+    GenScriptTaskResult,
     Pagination,
     PingTask,
     PingTaskResult,
@@ -22,6 +26,10 @@ from yidong.model import (
     Task,
     TaskContainer,
     TaskInfo,
+    VideoMashupTask,
+    VideoMashupTaskResult,
+    VideoSummaryTask,
+    VideoSummaryTaskResult,
 )
 from yidong.util import PaginationIter, TaskRef
 
@@ -198,12 +206,13 @@ class YiDong:
             start = datetime.now()
             while True:
                 t = self._get_task(id)
-                if t.result is not None:
+                if t.is_done():
                     return t
-                if t.records:
-                    print(
-                        f"{id}\t{t.records[-1].time}\t{t.records[-1].type.value}\t{t.records[-1].message}"
-                    )
+                else:
+                    if t.records:
+                        print(
+                            f"{id}\t{t.records[-1].time}\t{t.records[-1].type.value}\t{t.records[-1].message}"
+                        )
                 now = datetime.now()
                 if timeout > 0 and (now - start).total_seconds() > timeout:
                     raise TimeoutError(
@@ -216,10 +225,10 @@ class YiDong:
     def delete_task(self, tid: str) -> bool:
         return self._request(bool, "delete", f"/task/{tid}")
 
-    def _submit_task(self, payload: dict = locals()) -> TaskRef:
+    def _submit_task(self, payload: dict) -> TaskRef:
         caller = inspect.currentframe().f_back.f_code.co_name
         task_type, task_result_type = get_args(
-            inspect.signature(payload[caller]).return_annotation
+            inspect.signature(getattr(self, caller)).return_annotation
         )
         payload = payload | {"type": caller}
         res = self._request(
@@ -231,7 +240,57 @@ class YiDong:
         return TaskRef[task_type, task_result_type](self, res.id)
 
     def ping(self) -> TaskRef[PingTask, PingTaskResult]:
-        return self._submit_task()
+        """A simple task to test the health of the server."""
+        return self._submit_task(locals())
+
+    def video_summary(
+        self,
+        video_id: str,
+        prompt: str | None = None,
+        chapter_prompt: str | None = None,
+        chapters: list[Chapter] | None = None,
+    ) -> TaskRef[VideoSummaryTask, VideoSummaryTaskResult]:
+        """
+        Summarize a video with the given video id. By default, the video will be
+        split into chapters. The summary of each chapter together with the summary of the whole video will be returned.
+
+        Args:
+            video_id: The video id.
+            prompt: The prompt for the video summary. If not set, a builtin prompt will be used here.
+            chapter_prompt: The prompt for the chapter summary. If not set, it will be the same as `prompt`.
+            chapters: The list of video chapters. If not set, the `chapters` will be extracted automatically.
+        """
+        return self._submit_task(locals())
+
+    def video_script(
+        self,
+        collection: list[GenScriptElement],
+        remix_s1_prompt: str,
+        remix_s2_prompt: str,
+    ) -> TaskRef[GenScriptTask, GenScriptTaskResult]:
+        """
+        Generate scripts based on a collection of video summarizations.
+        """
+        return self._submit_task(locals())
+
+    def video_mashup(
+        self,
+        video_ids: list[str],
+        voice_overs: list[str],
+        bgm_id: str,
+        voice_style_id: str,
+        chapters: list[Chapter] | None = None,
+    ) -> TaskRef[VideoMashupTask, VideoMashupTaskResult]:
+        """Create a new video based on the given videos and other elements.
+
+        Args:
+            video_ids: The list of video ids.
+            chapters: The list of chapters. If not provided, the whole video will be used.
+            voice_overs: The list of voice over texts.
+            bgm_id: The background music id. Make sure it exists first.
+            voice_style_id: The voice style id. TODO: enumerate all available styles here.
+        """
+        return self._submit_task(locals())
 
 
 def main():
