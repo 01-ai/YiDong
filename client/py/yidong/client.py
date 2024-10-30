@@ -81,7 +81,7 @@ class YiDong:
 
     def add_resource(
         self, file: str | None = None, content_type: str | None = None
-    ) -> str:
+    ) -> str | list[str]:
         """Add a resource to the server. A resource id will be returned.
         If `file` is not provided, a pre-signed url for uploading will be
         returned.
@@ -130,6 +130,9 @@ class YiDong:
                     )
                     res = Reply[ResourceUploadResponse].parse_obj(r.json())
                     return res.data.id
+            elif r.status_code == 200:
+                res = Reply[str | list[str]].parse_obj(r.json())
+                return res.data
             else:
                 raise YDError(1, "Failed to get pre-signed url", r.text)
         else:
