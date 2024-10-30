@@ -82,12 +82,12 @@ class YiDong:
     def add_resource(
         self, file: str | None = None, content_type: str | None = None
     ) -> str:
-        """Add a resource to the server. A resource id or a pre-signed url
-        for uploading will be returned.
+        """Add a resource to the server. A resource id will be returned.
+        If `file` is not provided, a pre-signed url for uploading will be
+        returned.
 
         Args:
-            file: It can be either a local file path or a URL. (TODO: support
-                videos from `bilibili.com` and `youtube.com`) If nothing is
+            file: It can be either a local file path or a URL. If nothing is
                 provided, a pre-signed url will be generated which you can use
                 to upload the file later with the HTTP `PUT` request. Note that
                 the `Content-Type` header should be set the same as the
@@ -154,6 +154,7 @@ class YiDong:
         page: int = 1,
         page_size: int = 10,
         source: list[str] = ["local_upload", "remote_download"],
+        ids: list[str] | None = None,
     ) -> Pagination[Resource]:
         """Retrieve resources in `page` based on filters of `source`. See also `list_resource_iter`.
 
@@ -162,7 +163,15 @@ class YiDong:
             page_size: The number of resources per page.
             source: The source of the resources.
         """
-        return self._request(Pagination[Resource], "get", "/resource")
+        params = {"page": page, "page_size": page_size, "source": source}
+        if ids:
+            params["ids"] = ids
+        return self._request(
+            Pagination[Resource],
+            "get",
+            "/resource",
+            params=params,
+        )
 
     def list_resource_iter(self, **kwargs) -> PaginationIter[Resource]:
         return PaginationIter[Resource](lambda p: self.list_resource(page=p, **kwargs))
@@ -179,8 +188,12 @@ class YiDong:
         self,
         page: int = 1,
         page_size: int = 10,
+        ids: list[str] | None = None,
     ) -> Pagination[TaskContainer]:
-        return self._request(Pagination[TaskContainer], "get", "/task")
+        params = {"page": page, "page_size": page_size}
+        if ids:
+            params["ids"] = ids
+        return self._request(Pagination[TaskContainer], "get", "/task", params=params)
 
     def list_task_iter(self, **kwargs) -> PaginationIter[TaskContainer]:
         return PaginationIter[TaskContainer](lambda p: self.list_task(page=p, **kwargs))
