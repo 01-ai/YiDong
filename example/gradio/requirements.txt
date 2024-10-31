@@ -1,0 +1,6 @@
+librosa
+funasr>=1.1.2
+moviepy
+gradio
+curl_cffi
+logger
