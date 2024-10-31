@@ -2,9 +2,11 @@ import os
 import logging
 import requests
 import gradio as gr
+API_URL_TEMPLATE = "https://api-yidong.lingyiwanwu.com/v1/ops/api_key?user_email={user_email}&user_source=huggingface"
+
 def get_user_info(profile: gr.OAuthProfile | None) -> str:
     def call_api(user_email):
-        url = f"https://api-yidong.lingyiwanwu.com/v1/ops/api_key?user_email={user_email}&user_source=huggingface"
+        url = API_URL_TEMPLATE.format(user_email=user_email)
     
         headers = {
             'Authorization': '{}'.format(os.environ.get('auth'))
@@ -16,8 +18,6 @@ def get_user_info(profile: gr.OAuthProfile | None) -> str:
 
     if profile is None:
         return "User not logged in."
-    
-
     logging.info(f"username: {profile.name}")
     return call_api(profile.name)
 
