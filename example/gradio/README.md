@@ -9,3 +9,5 @@ hf_oauth: true
 hf_oauth_scopes:
 - email
 ---
+
+For more details, check out: [YiDong](https://github.com/01-ai/yidong)
