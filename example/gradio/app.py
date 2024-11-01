@@ -5,7 +5,7 @@ from huggingface_hub import whoami
 import gradio as gr
 API_URL_TEMPLATE = "https://api-yidong.lingyiwanwu.com/v1/ops/api_key?user_email={user_email}&user_source=huggingface"
 
-def get_user_email(oauth_token: gr.OAuthToken | None) -> str:
+def get_user_email(oauth_token: gr.OAuthToken | None) -> str|None:
     def call_api(user_email):
         url = API_URL_TEMPLATE.format(user_email=user_email)
         headers = {
