@@ -1,0 +1,41 @@
+name: Sync Gradio Demo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      is_hf_changed: ${{ steps.changed-files.outputs.hf_any_changed }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files_yaml: |
+            hf:
+              - example/gradio/**
+  sync-hf:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.is_hf_changed == 'true' 
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync Gradio Demo
+        run: |
+          git config --global user.email "yi@01.ai"
+          git config --global user.name "Yi Team"
+          git clone  https://${{ secrets.HF_USER }}:{{ secrets.HF_TOKEN }}@huggingface.co/spaces/01-ai/YiDong 01AI_HF_YIDONG
+          cd 01AI_HF_YIDONG
+          cp -r ../example/gradio/* .
+          git add .
+          git commit --dry-run || exit 0
+          git commit -m "Auto Sync from ${{ github.repositoryUrl}}/commit/${{ github.sha}}"
+          git push
