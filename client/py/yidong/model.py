@@ -123,6 +123,7 @@ class VideoSummaryTaskResult(BaseModel):
     video_id: str
     video_summary: Summary | None
     chapters: list[Chapter]
+    chapters_ids: list[str]
     chapter_summaries: list[Summary | None]
 
 
