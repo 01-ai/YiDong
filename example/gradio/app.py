@@ -12,7 +12,6 @@ def get_user_email(oauth_token: gr.OAuthToken | None) -> str|None:
             'Authorization':os.getenv("AUTH")
         }
         response = requests.post(url, headers=headers)
-        print(response)
         return response.json()["data"]["display_api_key"]
     if oauth_token is None:
         return "User not logged in."
