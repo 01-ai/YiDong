@@ -131,7 +131,6 @@ class GenScriptElement(BaseModel):
     video_id: str
     video_summary: Summary
     chapters: list[Chapter]
-    chapter_ids: list[str]
     chapter_summaries: list[Summary]
 
 
