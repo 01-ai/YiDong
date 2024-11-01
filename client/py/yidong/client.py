@@ -26,6 +26,8 @@ from yidong.model import (
     Task,
     TaskContainer,
     TaskInfo,
+    VideoConcatTask,
+    VideoConcatTaskResult,
     VideoMashupTask,
     VideoMashupTaskResult,
     VideoSummaryTask,
@@ -81,7 +83,7 @@ class YiDong:
 
     def add_resource(
         self, file: str | None = None, content_type: str | None = None
-    ) -> str:
+    ) -> str | list[str]:
         """Add a resource to the server. A resource id will be returned.
         If `file` is not provided, a pre-signed url for uploading will be
         returned.
@@ -130,6 +132,9 @@ class YiDong:
                     )
                     res = Reply[ResourceUploadResponse].parse_obj(r.json())
                     return res.data.id
+            elif r.status_code == 200:
+                res = Reply[str | list[str]].parse_obj(r.json())
+                return res.data
             else:
                 raise YDError(1, "Failed to get pre-signed url", r.text)
         else:
@@ -303,6 +308,12 @@ class YiDong:
             bgm_id: The background music id. Make sure it exists first.
             voice_style_id: The voice style id. TODO: enumerate all available styles here.
         """
+        return self._submit_task(locals())
+
+    def video_concat(
+        self, video_ids: list[str], chapters: list[Chapter] = []
+    ) -> TaskRef[VideoConcatTask, VideoConcatTaskResult]:
+        """Concatenate multiple videos into one. If `chapters` are provided, they should be of the same length as `video_ids`."""
         return self._submit_task(locals())
 
 

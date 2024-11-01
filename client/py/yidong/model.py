@@ -123,6 +123,7 @@ class VideoSummaryTaskResult(BaseModel):
     video_id: str
     video_summary: Summary | None
     chapters: list[Chapter]
+    chapters_ids: list[str]
     chapter_summaries: list[Summary | None]
 
 
@@ -163,10 +164,25 @@ class VideoMashupTask(BaseModel):
 class VideoMashupTaskResult(BaseModel):
     type: Literal["video_mashup"] = "video_mashup"
     video_id: str
+    raw_video_id: str
+    voice_over_ids: list[str]
+    bgm_id: str
+    chapter_ids: list[str]
+
+
+class VideoConcatTask(BaseModel):
+    type: Literal["video_concat"] = "video_concat"
+    video_ids: list[str]
+    chapters: list[Chapter] = []
+
+
+class VideoConcatTaskResult(BaseModel):
+    type: Literal["video_concat"] = "video_concat"
+    video_id: str
 
 
 Task = Annotated[
-    Union[PingTask, VideoSummaryTask, GenScriptTask, VideoMashupTask],
+    Union[PingTask, VideoSummaryTask, GenScriptTask, VideoMashupTask, VideoConcatTask],
     Field(discriminator="type"),
 ]
 
@@ -178,6 +194,7 @@ TaskResult = Annotated[
         VideoSummaryTaskResult,
         GenScriptTaskResult,
         VideoMashupTaskResult,
+        VideoConcatTaskResult,
     ],
     Field(discriminator="type"),
 ]
