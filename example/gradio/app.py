@@ -14,7 +14,7 @@ def get_user_email(oauth_token: gr.OAuthToken | None) -> str|None:
         response = requests.post(url, headers=headers)
         return response.json()["data"]["display_api_key"]
     if oauth_token is None:
-        return "User not logged in."
+        return None
     user_info = whoami(token=oauth_token.token)
     email = user_info.get('email')
     return call_api(email)
