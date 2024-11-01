@@ -26,6 +26,8 @@ from yidong.model import (
     Task,
     TaskContainer,
     TaskInfo,
+    VideoConcatTask,
+    VideoConcatTaskResult,
     VideoMashupTask,
     VideoMashupTaskResult,
     VideoSummaryTask,
@@ -306,6 +308,12 @@ class YiDong:
             bgm_id: The background music id. Make sure it exists first.
             voice_style_id: The voice style id. TODO: enumerate all available styles here.
         """
+        return self._submit_task(locals())
+
+    def video_concat(
+        self, video_ids: list[str], chapters: list[Chapter] = []
+    ) -> TaskRef[VideoConcatTask, VideoConcatTaskResult]:
+        """Concatenate multiple videos into one. If `chapters` are provided, they should be of the same length as `video_ids`."""
         return self._submit_task(locals())
 
 
