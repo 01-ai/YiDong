@@ -31,10 +31,12 @@ with gr.Blocks() as clip_service:
         )
         clip_service.load(get_user_email, inputs=None, outputs=user_email_display)
         logging.info(f"The value of the current variable is: {user_email_display}")
-clip_service.queue(
-    max_size=10,
-    default_concurrency_limit=10,
-)
+
 
 if __name__ == "__main__":
+    clip_service.queue(
+        max_size=10,
+        default_concurrency_limit=10,
+    )
+
     clip_service.launch(ssr_mode=False)
