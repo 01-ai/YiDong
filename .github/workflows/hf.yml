@@ -32,7 +32,7 @@ jobs:
         run: |
           git config --global user.email "yi@01.ai"
           git config --global user.name "Yi Team"
-          git clone  https://${{ secrets.HF_USER }}:{{ secrets.HF_TOKEN }}@huggingface.co/spaces/01-ai/YiDong 01AI_HF_YIDONG
+          git clone  https://${{ secrets.HF_USER }}:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/01-ai/YiDong 01AI_HF_YIDONG
           cd 01AI_HF_YIDONG
           cp -r ../example/gradio/* .
           git add .
