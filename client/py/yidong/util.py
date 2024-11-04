@@ -1,6 +1,22 @@
 from typing import Any, Callable, Generic, Iterable, Iterator, TypeVar
 
-from yidong.model import Pagination, TaskContainer, TaskResultType, TaskType
+from yidong.model import Pagination, Resource, TaskContainer, TaskResultType, TaskType
+
+
+class ResourceRef:
+    def __init__(self, client: "YiDong", rid: str, **kwargs) -> None:
+        self.client = client
+        self.rid = rid
+        self.meta = kwargs
+
+    def __call__(self) -> Resource | None:
+        return self.client.get_resource(self.rid)
+
+    def __repr__(self) -> str:
+        return f"ResourceRef('{self.rid}', {self.meta})"
+
+    def __getitem__(self, key: str):
+        return self.meta[key]
 
 
 class TaskRef(Generic[TaskType, TaskResultType]):
