@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from time import sleep
 from typing import Iterable, get_args
+from urllib.parse import urlparse
 
 import httpx
 import rich
@@ -33,7 +34,7 @@ from yidong.model import (
     VideoSummaryTask,
     VideoSummaryTaskResult,
 )
-from yidong.util import PaginationIter, TaskRef
+from yidong.util import PaginationIter, ResourceRef, TaskRef
 
 
 class YiDong:
@@ -83,10 +84,8 @@ class YiDong:
 
     def add_resource(
         self, file: str | None = None, content_type: str | None = None
-    ) -> str | list[str]:
+    ) -> Resource | ResourceRef:
         """Add a resource to the server. A resource id will be returned.
-        If `file` is not provided, a pre-signed url for uploading will be
-        returned.
 
         Args:
             file: It can be either a local file path or a URL. If nothing is
@@ -109,7 +108,11 @@ class YiDong:
                 headers={"Content-Type": content_type or "application/octet-stream"},
             )
             if r.status_code == 307:
-                return r.headers["Location"]
+                return ResourceRef(
+                    self,
+                    r.headers["x-yds-resource-id"],
+                    upload_url=r.headers["Location"],
+                )
             else:
                 raise YDError(1, "Failed to get pre-signed url", r.text)
         elif os.path.exists(file):
@@ -124,21 +127,26 @@ class YiDong:
                 params={"file": file},
             )
             if r.status_code == 307:
+                rid = r.headers["x-yds-resource-id"]
+                url = r.headers["Location"]
                 with open(file, "rb") as f:
                     r = self._client.put(
-                        r.headers["Location"],
+                        url,
                         content=f,
                         headers=headers,
                     )
-                    res = Reply[ResourceUploadResponse].parse_obj(r.json())
-                    return res.data.id
-            elif r.status_code == 200:
-                res = Reply[str | list[str]].parse_obj(r.json())
-                return res.data
+                return self.get_resource(rid)
             else:
                 raise YDError(1, "Failed to get pre-signed url", r.text)
         else:
-            raise FileNotFoundError(f"File not found: {file}")
+            o = urlparse(file)
+            if o.scheme in ["http", "https"]:
+                r = self._request(
+                    ResourceUploadResponse, "put", f"/resource", params={"file": file}
+                )
+                return ResourceRef(self, r.id)
+            else:
+                raise FileNotFoundError(f"File not found: {file}")
 
     def update_resource(
         self, id: str, name: str | None = None, mime: str | None = None
