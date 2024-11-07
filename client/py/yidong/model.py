@@ -184,12 +184,14 @@ class VideoConcatTaskResult(BaseModel):
 class VideoSnapshotTask(BaseModel):
     type: Literal["video_snapshot"] = "video_snapshot"
     video_id: str
-    timestamps: list[float]
+    start: float
+    step: int
+    stop: float
 
 
 class VideoSnapshotTaskResult(BaseModel):
     type: Literal["video_snapshot"] = "video_snapshot"
-    snapshots: list[str]
+    image_ids: list[str]
 
 
 Task = Annotated[
