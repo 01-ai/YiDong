@@ -31,6 +31,8 @@ from yidong.model import (
     VideoConcatTaskResult,
     VideoMashupTask,
     VideoMashupTaskResult,
+    VideoSnapshotTask,
+    VideoSnapshotTaskResult,
     VideoSummaryTask,
     VideoSummaryTaskResult,
 )
@@ -322,6 +324,19 @@ class YiDong:
         self, video_ids: list[str], chapters: list[Chapter] = []
     ) -> TaskRef[VideoConcatTask, VideoConcatTaskResult]:
         """Concatenate multiple videos into one. If `chapters` are provided, they should be of the same length as `video_ids`."""
+        return self._submit_task(locals())
+
+    def video_snapshot(
+        self, video_id: str, *, start: float = 0.0, step: int = 1, stop: float = 0.0
+    ) -> TaskRef[VideoSnapshotTask, VideoSnapshotTaskResult]:
+        """Take snapshots of the video at the given timestamps.
+
+        Args:
+            video_id: The video id.
+            start: The start timestamp in seconds.
+            step: The step between each snapshot. (Only integers are allowed for now)
+            stop: The stop timestamp in seconds. If it is longer than the video duration, only the video duration will be used.
+        """
         return self._submit_task(locals())
 
 
