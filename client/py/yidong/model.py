@@ -181,8 +181,26 @@ class VideoConcatTaskResult(BaseModel):
     video_id: str
 
 
+class VideoSnapshotTask(BaseModel):
+    type: Literal["video_snapshot"] = "video_snapshot"
+    video_id: str
+    timestamps: list[float]
+
+
+class VideoSnapshotTaskResult(BaseModel):
+    type: Literal["video_snapshot"] = "video_snapshot"
+    snapshots: list[str]
+
+
 Task = Annotated[
-    Union[PingTask, VideoSummaryTask, GenScriptTask, VideoMashupTask, VideoConcatTask],
+    Union[
+        PingTask,
+        VideoSummaryTask,
+        GenScriptTask,
+        VideoMashupTask,
+        VideoConcatTask,
+        VideoSnapshotTask,
+    ],
     Field(discriminator="type"),
 ]
 
@@ -195,6 +213,7 @@ TaskResult = Annotated[
         GenScriptTaskResult,
         VideoMashupTaskResult,
         VideoConcatTaskResult,
+        VideoSnapshotTaskResult,
     ],
     Field(discriminator="type"),
 ]
