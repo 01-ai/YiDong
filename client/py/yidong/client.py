@@ -194,7 +194,7 @@ class YiDong:
     def get_resource(self, id: str) -> Resource:
         return self._request(Resource, "get", f"/resource/{id}")
 
-    def download_resource(self, id: str, path: str | None = None):
+    def download_resource(self, id: str, path: str | None = None) -> str:
         r = self.get_resource(id)
         path = path or r.name or f"{r.id}.{r.mime.split('/')[1]}"
         with open(path, "wb") as f:
