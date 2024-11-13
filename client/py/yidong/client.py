@@ -14,9 +14,12 @@ from yidong.config import CONFIG
 from yidong.exception import YDError
 from yidong.model import (
     Chapter,
+    DiffusionConfig,
     GenScriptElement,
     GenScriptTask,
     GenScriptTaskResult,
+    ImageGenerationTask,
+    ImageGenerationTaskResult,
     Pagination,
     PingTask,
     PingTaskResult,
@@ -345,6 +348,15 @@ class YiDong:
             step: The step between each snapshot. (Only integers are allowed for now)
             stop: The stop timestamp in seconds. If it is longer than the video duration, only the video duration will be used.
         """
+        return self._submit_task(locals())
+
+    def image_generation(
+        self,
+        prompt: str = "",
+        image_id: str = "",
+        config: DiffusionConfig = DiffusionConfig(),
+    ) -> TaskRef[ImageGenerationTask, ImageGenerationTaskResult]:
+        """Generate images based on the given prompt or the reference image."""
         return self._submit_task(locals())
 
 

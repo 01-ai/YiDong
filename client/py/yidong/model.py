@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, StrEnum
 from typing import Annotated, Generic, Literal, TypeVar, Union
 
 from pydantic import BaseModel, Field
@@ -194,6 +194,31 @@ class VideoSnapshotTaskResult(BaseModel):
     image_ids: list[str]
 
 
+class DiffusionModel(StrEnum):
+    SDXL = "sdxl"
+    FLUX = "flux"
+
+
+class DiffusionConfig(BaseModel):
+    model: str = DiffusionModel.SDXL
+    width: str = "1024"
+    height: str = "1024"
+    steps: int = 20
+    count: int = 1
+
+
+class ImageGenerationTask(BaseModel):
+    type: Literal["image_generation"] = "image_generation"
+    prompt: str = ""
+    image_id: str = ""
+    config: DiffusionConfig = DiffusionConfig()
+
+
+class ImageGenerationTaskResult(BaseTaskResult):
+    type: Literal["image_generation"] = "image_generation"
+    generated_image_ids: list[str]
+
+
 Task = Annotated[
     Union[
         PingTask,
@@ -202,6 +227,7 @@ Task = Annotated[
         VideoMashupTask,
         VideoConcatTask,
         VideoSnapshotTask,
+        ImageGenerationTask,
     ],
     Field(discriminator="type"),
 ]
@@ -216,6 +242,7 @@ TaskResult = Annotated[
         VideoMashupTaskResult,
         VideoConcatTaskResult,
         VideoSnapshotTaskResult,
+        ImageGenerationTaskResult,
     ],
     Field(discriminator="type"),
 ]
