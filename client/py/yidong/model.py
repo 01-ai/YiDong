@@ -214,7 +214,7 @@ class ImageGenerationTask(BaseModel):
     config: DiffusionConfig = DiffusionConfig()
 
 
-class ImageGenerationTaskResult(BaseTaskResult):
+class ImageGenerationTaskResult(BaseModel):
     type: Literal["image_generation"] = "image_generation"
     generated_image_ids: list[str]
 
