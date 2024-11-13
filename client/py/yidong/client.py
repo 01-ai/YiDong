@@ -194,6 +194,14 @@ class YiDong:
     def get_resource(self, id: str) -> Resource:
         return self._request(Resource, "get", f"/resource/{id}")
 
+    def download_resource(self, id: str, path: str | None = None) -> str:
+        r = self.get_resource(id)
+        path = path or r.name or f"{r.id}.{r.mime.split('/')[1]}"
+        with open(path, "wb") as f:
+            resp = httpx.get(r.url)
+            f.write(resp.content)
+        return path
+
     def delete_resource(self, id: str) -> None:
         self._request(bool, "delete", f"/resource/{id}")
 
