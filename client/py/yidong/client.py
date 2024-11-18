@@ -38,6 +38,7 @@ from yidong.model import (
     VideoSnapshotTaskResult,
     VideoSummaryTask,
     VideoSummaryTaskResult,
+    WebhookResponse,
 )
 from yidong.util import PaginationIter, ResourceRef, TaskRef
 
@@ -207,6 +208,13 @@ class YiDong:
 
     def delete_resource(self, id: str) -> None:
         self._request(bool, "delete", f"/resource/{id}")
+
+    #####
+
+    def set_webhook(self, url: str, secret: str) -> WebhookResponse:
+        return self._request(
+            WebhookResponse, "post", "/webhook", payload={"url": url, "secret": secret}
+        )
 
     #####
 
