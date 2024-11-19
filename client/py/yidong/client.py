@@ -210,10 +210,42 @@ class YiDong:
         self._request(bool, "delete", f"/resource/{id}")
 
     #####
+    def list_webhook(self) -> list[WebhookResponse]:
+        webhooks = self._request(Pagination[WebhookResponse], "get", "/webhook")
+        return webhooks.list
 
-    def set_webhook(self, url: str, secret: str) -> WebhookResponse:
+    # TODO: add scope?
+    def add_webhook(self, url: str, secret: str) -> WebhookResponse:
         return self._request(
             WebhookResponse, "post", "/webhook", payload={"url": url, "secret": secret}
+        )
+
+    def enable_webhook(self, webhook_id: str) -> WebhookResponse:
+        return self._request(
+            WebhookResponse,
+            "patch",
+            f"/webhook/{webhook_id}",
+            payload={"status": "active"},
+        )
+
+    def disable_webhook(self, webhook_id: str) -> WebhookResponse:
+        return self._request(
+            WebhookResponse,
+            "patch",
+            f"/webhook/{webhook_id}",
+            payload={"status": "inactive"},
+        )
+
+    def update_webhook(
+        self, webhook_id: str, *, url: str | None = None, secret: str | None = None
+    ) -> WebhookResponse:
+        payload = {}
+        if url is not None:
+            payload["url"] = url
+        if secret is not None:
+            payload["secret"] = secret
+        return self._request(
+            WebhookResponse, "patch", f"/webhook/{webhook_id}", payload=payload
         )
 
     #####
