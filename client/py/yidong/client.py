@@ -307,8 +307,8 @@ class YiDong:
                         f"failed to fetch task [{id}] result within {timeout} seconds"
                     )
                 sleep(poll_interval)
-        else:
-            return self._get_task(id)
+
+        return self._get_task(id)
 
     def delete_task(self, tid: str) -> bool:
         return self._request(bool, "delete", f"/task/{tid}")
