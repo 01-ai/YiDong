@@ -3,7 +3,7 @@ import mimetypes
 import os
 from datetime import datetime
 from time import sleep
-from typing import Iterable, get_args
+from typing import Any, Iterable, get_args
 from urllib.parse import urlparse
 
 import httpx
@@ -11,7 +11,12 @@ import rich
 from jsonargparse import CLI
 from pydantic import TypeAdapter, ValidationError
 from yidong.config import CONFIG
-from yidong.exception import YDError
+from yidong.exception import (
+    YDError,
+    YDInternalServerError,
+    YDInvalidReplyError,
+    convert_reply_to_error,
+)
 from yidong.model import (
     Chapter,
     DiffusionConfig,
@@ -38,6 +43,7 @@ from yidong.model import (
     VideoSnapshotTaskResult,
     VideoSummaryTask,
     VideoSummaryTaskResult,
+    WebhookResponse,
 )
 from yidong.util import PaginationIter, ResourceRef, TaskRef
 
@@ -69,22 +75,26 @@ class YiDong:
         headers: dict | None = None,
         content: str | bytes | Iterable[bytes] | None = None,
     ) -> T:
-        resp = self._client.request(
-            method=method,
-            url=path,
-            params=params,
-            json=payload,
-            headers=headers,
-            content=content,
-        )
         try:
-            payload = resp.json()
-            reply = Reply[T].parse_obj(payload)
-        except ValidationError as e:
-            raise YDError(1, str(e), payload)
+            resp = self._client.request(
+                method=method,
+                url=path,
+                params=params,
+                json=payload,
+                headers=headers,
+                content=content,
+            )
+            resp.raise_for_status()
+            reply = Reply[T].parse_raw(resp.content)
+        except httpx.HTTPStatusError as e:
+            raise YDInternalServerError(e.response.status_code, e.response.text)
+        except ValidationError:
+            try:
+                reply = Reply[Any].parse_raw(resp.content)
+                raise convert_reply_to_error(reply)
+            except ValidationError:
+                raise YDInvalidReplyError(resp.content)
 
-        if reply.code != 0:
-            raise YDError(reply.code, reply.message, reply.data)
         return reply.data
 
     def add_resource(
@@ -207,6 +217,45 @@ class YiDong:
 
     def delete_resource(self, id: str) -> None:
         self._request(bool, "delete", f"/resource/{id}")
+
+    #####
+    def list_webhook(self) -> list[WebhookResponse]:
+        webhooks = self._request(Pagination[WebhookResponse], "get", "/webhook")
+        return webhooks.list
+
+    # TODO: add scope?
+    def add_webhook(self, url: str, secret: str) -> WebhookResponse:
+        return self._request(
+            WebhookResponse, "post", "/webhook", payload={"url": url, "secret": secret}
+        )
+
+    def enable_webhook(self, webhook_id: str) -> WebhookResponse:
+        return self._request(
+            WebhookResponse,
+            "patch",
+            f"/webhook/{webhook_id}",
+            payload={"status": "active"},
+        )
+
+    def disable_webhook(self, webhook_id: str) -> WebhookResponse:
+        return self._request(
+            WebhookResponse,
+            "patch",
+            f"/webhook/{webhook_id}",
+            payload={"status": "inactive"},
+        )
+
+    def update_webhook(
+        self, webhook_id: str, *, url: str | None = None, secret: str | None = None
+    ) -> WebhookResponse:
+        payload = {}
+        if url is not None:
+            payload["url"] = url
+        if secret is not None:
+            payload["secret"] = secret
+        return self._request(
+            WebhookResponse, "patch", f"/webhook/{webhook_id}", payload=payload
+        )
 
     #####
 

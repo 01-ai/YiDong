@@ -102,6 +102,19 @@ class Summary(BaseModel):
 #####
 
 
+class WebhookResponse(BaseModel):
+    user_id: str
+    webhook_id: str
+    url: str
+    secret: str
+    status: str
+    created_at: str
+    updated_at: str
+
+
+#####
+
+
 class PingTask(BaseModel):
     type: Literal["ping"] = "ping"
 
