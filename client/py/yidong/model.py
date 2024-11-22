@@ -205,7 +205,25 @@ class VideoSnapshotTask(BaseModel):
 class VideoSnapshotTaskResult(BaseModel):
     type: Literal["video_snapshot"] = "video_snapshot"
     image_ids: list[str]
+    
 
+class VideoSegmentationTask(BaseModel):
+    type: Literal["video_segmentation"] = "video_segmentation"
+    video_id: str
+
+class VideoSegmentationTaskResult(BaseModel):
+    type: Literal["video_segmentation"] = "video_segmentation"
+    chapters: list[Chapter]
+
+class VideoClipTask(BaseModel):
+    type: Literal["video_clip"] = "video_clip"
+    video_id: str
+    chapters: list[Chapter]
+    
+class VideoClipTaskResult(BaseModel):
+    type: Literal["video_clip"] = "video_clip"
+    video_ids: list[str]
+    
 
 class DiffusionModel(StrEnum):
     SDXL = "sdxl"
@@ -239,6 +257,8 @@ Task = Annotated[
         GenScriptTask,
         VideoMashupTask,
         VideoConcatTask,
+        VideoSegmentationTask,
+        VideoClipTask,
         VideoSnapshotTask,
         ImageGenerationTask,
     ],
@@ -254,6 +274,8 @@ TaskResult = Annotated[
         GenScriptTaskResult,
         VideoMashupTaskResult,
         VideoConcatTaskResult,
+        VideoSegmentationTaskResult,
+        VideoClipTaskResult,
         VideoSnapshotTaskResult,
         ImageGenerationTaskResult,
     ],

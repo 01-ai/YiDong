@@ -41,6 +41,10 @@ from yidong.model import (
     VideoMashupTaskResult,
     VideoSnapshotTask,
     VideoSnapshotTaskResult,
+    VideoSegmentationTask, 
+    VideoSegmentationTaskResult,
+    VideoClipTask, 
+    VideoClipTaskResult,
     VideoSummaryTask,
     VideoSummaryTaskResult,
     WebhookResponse,
@@ -209,7 +213,7 @@ class YiDong:
 
     def download_resource(self, id: str, path: str | None = None) -> str:
         r = self.get_resource(id)
-        path = path or r.name or f"{r.id}.{r.mime.split('/')[1]}"
+        path = path or r.name or f"{r.id}.{r.mime.split('/')[1]}" 
         with open(path, "wb") as f:
             resp = httpx.get(r.url)
             f.write(resp.content)
@@ -386,6 +390,19 @@ class YiDong:
         """Concatenate multiple videos into one. If `chapters` are provided, they should be of the same length as `video_ids`."""
         return self._submit_task(locals())
 
+    def video_segmentation(
+        self, video_id: str
+    ) -> TaskRef[VideoSegmentationTask, VideoSegmentationTaskResult]:
+        """Slicing long videos into segments"""
+        return self._submit_task(locals())
+
+    def video_clip(
+        self, video_id: str, chapters: list[Chapter]
+    ) -> TaskRef[VideoClipTask, VideoClipTaskResult]:
+        """Clip the video with the given chapters."""
+        return self._submit_task(locals())
+    
+    
     def video_snapshot(
         self, video_id: str, *, start: float = 0.0, step: int = 1, stop: float = 0.0
     ) -> TaskRef[VideoSnapshotTask, VideoSnapshotTaskResult]:
