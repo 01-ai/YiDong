@@ -147,17 +147,18 @@ class GenScriptElement(BaseModel):
     chapter_summaries: list[Summary]
 
 
+class GenScriptTaskResultElement(BaseModel):
+    video_id: str
+    chapter: Chapter
+    data: dict
+
+
 class GenScriptTask(BaseModel):
     type: Literal["video_script"] = "video_script"
     collection: list[GenScriptElement]
     remix_s1_prompt: str
     remix_s2_prompt: str
-
-
-class GenScriptTaskResultElement(BaseModel):
-    video_id: str
-    chapter: Chapter
-    data: dict
+    references: list[list[GenScriptTaskResultElement]] = []
 
 
 class GenScriptTaskResult(BaseModel):
@@ -205,6 +206,27 @@ class VideoSnapshotTask(BaseModel):
 class VideoSnapshotTaskResult(BaseModel):
     type: Literal["video_snapshot"] = "video_snapshot"
     image_ids: list[str]
+
+
+class VideoSegmentationTask(BaseModel):
+    type: Literal["video_segmentation"] = "video_segmentation"
+    video_id: str
+
+
+class VideoSegmentationTaskResult(BaseModel):
+    type: Literal["video_segmentation"] = "video_segmentation"
+    chapters: list[Chapter]
+
+
+class VideoClipTask(BaseModel):
+    type: Literal["video_clip"] = "video_clip"
+    video_id: str
+    chapters: list[Chapter]
+
+
+class VideoClipTaskResult(BaseModel):
+    type: Literal["video_clip"] = "video_clip"
+    video_ids: list[str]
 
 
 class DiffusionModel(StrEnum):
