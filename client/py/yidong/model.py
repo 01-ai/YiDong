@@ -208,27 +208,6 @@ class VideoSnapshotTaskResult(BaseModel):
     image_ids: list[str]
 
 
-class VideoSegmentationTask(BaseModel):
-    type: Literal["video_segmentation"] = "video_segmentation"
-    video_id: str
-
-
-class VideoSegmentationTaskResult(BaseModel):
-    type: Literal["video_segmentation"] = "video_segmentation"
-    chapters: list[Chapter]
-
-
-class VideoClipTask(BaseModel):
-    type: Literal["video_clip"] = "video_clip"
-    video_id: str
-    chapters: list[Chapter]
-
-
-class VideoClipTaskResult(BaseModel):
-    type: Literal["video_clip"] = "video_clip"
-    video_ids: list[str]
-
-
 class DiffusionModel(StrEnum):
     SDXL = "sdxl"
     FLUX = "flux"
