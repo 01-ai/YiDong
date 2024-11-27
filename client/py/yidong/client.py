@@ -23,6 +23,7 @@ from yidong.model import (
     GenScriptElement,
     GenScriptTask,
     GenScriptTaskResult,
+    GenScriptTaskResultElement,
     ImageGenerationTask,
     ImageGenerationTaskResult,
     Pagination,
@@ -355,6 +356,7 @@ class YiDong:
         collection: list[GenScriptElement],
         remix_s1_prompt: str,
         remix_s2_prompt: str,
+        references: list[list[GenScriptTaskResultElement]],
     ) -> TaskRef[GenScriptTask, GenScriptTaskResult]:
         """
         Generate scripts based on a collection of video summarizations.
