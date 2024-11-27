@@ -147,17 +147,18 @@ class GenScriptElement(BaseModel):
     chapter_summaries: list[Summary]
 
 
+class GenScriptTaskResultElement(BaseModel):
+    video_id: str
+    chapter: Chapter
+    data: dict
+
+
 class GenScriptTask(BaseModel):
     type: Literal["video_script"] = "video_script"
     collection: list[GenScriptElement]
     remix_s1_prompt: str
     remix_s2_prompt: str
-
-
-class GenScriptTaskResultElement(BaseModel):
-    video_id: str
-    chapter: Chapter
-    data: dict
+    references: list[list[GenScriptTaskResultElement]] = []
 
 
 class GenScriptTaskResult(BaseModel):
