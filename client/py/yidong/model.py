@@ -173,6 +173,7 @@ class VideoMashupTask(BaseModel):
     voice_overs: list[str]
     bgm_id: str
     voice_style_id: str
+    voice_style_text: str
 
 
 class VideoMashupTaskResult(BaseModel):

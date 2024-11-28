@@ -369,6 +369,7 @@ class YiDong:
         voice_overs: list[str],
         bgm_id: str,
         voice_style_id: str,
+        voice_style_text: str,
         chapters: list[Chapter] | None = None,
     ) -> TaskRef[VideoMashupTask, VideoMashupTaskResult]:
         """Create a new video based on the given videos and other elements.
@@ -378,7 +379,8 @@ class YiDong:
             chapters: The list of chapters. If not provided, the whole video will be used.
             voice_overs: The list of voice over texts.
             bgm_id: The background music id. Make sure it exists first.
-            voice_style_id: The voice style id. TODO: enumerate all available styles here.
+            voice_style_id: The voice style resource id. Make sure it exists first by uploading your voice sample.
+            voice_style_text: The transcript of the voice style.
         """
         return self._submit_task(locals())
 
