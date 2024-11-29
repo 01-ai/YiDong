@@ -357,6 +357,7 @@ class YiDong:
         remix_s1_prompt: str,
         remix_s2_prompt: str,
         references: list[list[GenScriptTaskResultElement]],
+        lang: str = "en",
     ) -> TaskRef[GenScriptTask, GenScriptTaskResult]:
         """
         Generate scripts based on a collection of video summarizations.
