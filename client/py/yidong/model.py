@@ -159,6 +159,7 @@ class GenScriptTask(BaseModel):
     remix_s1_prompt: str
     remix_s2_prompt: str
     references: list[list[GenScriptTaskResultElement]] = []
+    lang: str = "en"
 
 
 class GenScriptTaskResult(BaseModel):
