@@ -372,6 +372,7 @@ class YiDong:
         voice_style_id: str,
         voice_style_text: str,
         chapters: list[Chapter] | None = None,
+        lang: str = "en",
     ) -> TaskRef[VideoMashupTask, VideoMashupTaskResult]:
         """Create a new video based on the given videos and other elements.
 
@@ -382,6 +383,7 @@ class YiDong:
             bgm_id: The background music id. Make sure it exists first.
             voice_style_id: The voice style resource id. Make sure it exists first by uploading your voice sample.
             voice_style_text: The transcript of the voice style.
+            lang: The language of the voice over text. We'll choose appropriate font and style based on the language. Make sure the voice style matches the language specified here.
         """
         return self._submit_task(locals())
 

@@ -175,6 +175,7 @@ class VideoMashupTask(BaseModel):
     bgm_id: str
     voice_style_id: str
     voice_style_text: str
+    lang: str = "en"
 
 
 class VideoMashupTaskResult(BaseModel):
