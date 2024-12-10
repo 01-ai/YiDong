@@ -193,7 +193,7 @@ class VoiceoverEditorConfig(BaseModel):
     position_x: float = 0.0
     position_y: float = 0.0
     style: str = "0"
-    highlight_color = ""
+    highlight_color: str = ""
     stroke_color: str = ""
     mask_color: str = ""
 
@@ -208,7 +208,7 @@ class TextoverEditorConfig(BaseModel):
     position: str = "bottom"
     style: str = "0"
     max_lines: int = 3
-    highlight_color = ""
+    highlight_color: str = ""
     stroke_color: str = ""
     mask_color: str = ""
     effect_in: str = ""
