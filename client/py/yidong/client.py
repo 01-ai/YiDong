@@ -38,6 +38,7 @@ from yidong.model import (
     TaskInfo,
     VideoConcatTask,
     VideoConcatTaskResult,
+    VideoEditorConfig,
     VideoMashupTask,
     VideoMashupTaskResult,
     VideoSnapshotTask,
@@ -373,6 +374,7 @@ class YiDong:
         voice_style_text: str,
         chapters: list[Chapter] | None = None,
         lang: str = "en",
+        editor_config: VideoEditorConfig | None = None,
     ) -> TaskRef[VideoMashupTask, VideoMashupTaskResult]:
         """Create a new video based on the given videos and other elements.
 
