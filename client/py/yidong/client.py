@@ -20,6 +20,7 @@ from yidong.exception import (
 from yidong.model import (
     Chapter,
     DiffusionConfig,
+    EditorConfig,
     GenScriptElement,
     GenScriptTask,
     GenScriptTaskResult,
@@ -38,7 +39,6 @@ from yidong.model import (
     TaskInfo,
     VideoConcatTask,
     VideoConcatTaskResult,
-    VideoEditorConfig,
     VideoMashupTask,
     VideoMashupTaskResult,
     VideoSnapshotTask,
@@ -374,7 +374,7 @@ class YiDong:
         voice_style_text: str,
         chapters: list[Chapter] | None = None,
         lang: str = "en",
-        editor_config: VideoEditorConfig | None = None,
+        editor_config: EditorConfig | None = None,
     ) -> TaskRef[VideoMashupTask, VideoMashupTaskResult]:
         """Create a new video based on the given videos and other elements.
 

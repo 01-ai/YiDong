@@ -236,6 +236,25 @@ class VideoEditorConfig(BaseModel):
     black_fill: str = "1"
 
 
+class TransitionEditorConfig(BaseModel):
+    style: str = ""
+
+
+class ChapterEditorConfig(BaseModel):
+    key: str = ""
+    audio: AudioEditorConfig = AudioEditorConfig()
+    voiceover: VoiceoverEditorConfig = VoiceoverEditorConfig()
+    textover: TextoverEditorConfig = TextoverEditorConfig()
+    image: ImageEditorConfig = ImageEditorConfig()
+    video: VideoEditorConfig = VideoEditorConfig()
+    transition: TransitionEditorConfig = TransitionEditorConfig()
+
+
+class EditorConfig(BaseModel):
+    global_editor_config: GlobalEditorConfig = GlobalEditorConfig()
+    chapter_editor_configs: list[ChapterEditorConfig] = []
+
+
 class VideoMashupTask(BaseModel):
     type: Literal["video_mashup"] = "video_mashup"
     video_ids: list[str]
@@ -245,7 +264,7 @@ class VideoMashupTask(BaseModel):
     voice_style_id: str
     voice_style_text: str
     lang: str = "en"
-    editor_config: VideoEditorConfig | None = None
+    editor_config: EditorConfig | None = None
 
 
 class VideoMashupTaskResult(BaseModel):
