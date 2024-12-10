@@ -167,6 +167,75 @@ class GenScriptTaskResult(BaseModel):
     styles: list[list[GenScriptTaskResultElement]]
 
 
+class BgmConfig(BaseModel):
+    resource_id: str = ""
+    volume: float = 0.0
+
+
+class GlobalEditorConfig(BaseModel):
+    bgm_config: BgmConfig = BgmConfig()
+
+
+class AudioEditorConfig(BaseModel):
+    resource_id: str = ""
+    start: float = 0.0
+    speed: float = 1.0
+    volume: float = 25
+
+
+class VoiceoverEditorConfig(BaseModel):
+    text: str = ""
+    font: str = ""
+    font_size: int = 0
+    font_color: str = ""
+    font_weight: str = ""
+    lang: str = ""
+    position_x: float = 0.0
+    position_y: float = 0.0
+    style: str = "0"
+    highlight_color = ""
+    stroke_color: str = ""
+    mask_color: str = ""
+
+
+class TextoverEditorConfig(BaseModel):
+    text: str = ""
+    font: str = ""
+    font_size: int = 0
+    font_color: str = ""
+    font_weight: str = ""
+    lang: str = ""
+    position: str = "bottom"
+    style: str = "0"
+    max_lines: int = 3
+    highlight_color = ""
+    stroke_color: str = ""
+    mask_color: str = ""
+    effect_in: str = ""
+    effect_out: str = ""
+    effect_bubble: str = ""
+
+
+class ImageEditorConfig(BaseModel):
+    resource_id: str = ""
+    start: float = 0.0
+    stop: float = 0.0
+    scale: float = 1.0
+    position_x: float = 1.0
+    position_y: float = 1.0
+    rotate: float = 0.0
+    animation: str = ""
+
+
+class VideoEditorConfig(BaseModel):
+    resource_id: str = ""
+    position_x: float = 1.0
+    position_y: float = 1.0
+    rotate: float = 0.0
+    animation: str = ""
+    black_fill: str = "1"
+
+
 class VideoMashupTask(BaseModel):
     type: Literal["video_mashup"] = "video_mashup"
     video_ids: list[str]
@@ -176,6 +245,7 @@ class VideoMashupTask(BaseModel):
     voice_style_id: str
     voice_style_text: str
     lang: str = "en"
+    editor_config: VideoEditorConfig | None = None
 
 
 class VideoMashupTaskResult(BaseModel):
