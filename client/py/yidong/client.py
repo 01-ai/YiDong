@@ -21,10 +21,10 @@ from yidong.model import (
     Chapter,
     DiffusionConfig,
     EditorConfig,
-    GenScriptElement,
-    GenScriptTask,
-    GenScriptTaskResult,
-    GenScriptTaskResultElement,
+    VideoScriptTaskElement,
+    VideoScriptTask,
+    VideoScriptTaskResult,
+    VideoScriptTaskResultElement,
     ImageGenerationTask,
     ImageGenerationTaskResult,
     Pagination,
@@ -354,12 +354,12 @@ class YiDong:
 
     def video_script(
         self,
-        collection: list[GenScriptElement],
+        collection: list[VideoScriptTaskElement],
         remix_s1_prompt: str,
         remix_s2_prompt: str,
-        references: list[list[GenScriptTaskResultElement]],
+        references: list[list[VideoScriptTaskResultElement]],
         lang: str = "en",
-    ) -> TaskRef[GenScriptTask, GenScriptTaskResult]:
+    ) -> TaskRef[VideoScriptTask, VideoScriptTaskResult]:
         """
         Generate scripts based on a collection of video summarizations.
         """

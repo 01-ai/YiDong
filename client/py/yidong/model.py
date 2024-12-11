@@ -140,31 +140,33 @@ class VideoSummaryTaskResult(BaseModel):
     chapter_summaries: list[Summary | None]
 
 
-class GenScriptElement(BaseModel):
+class VideoScriptTaskElement(BaseModel):
     video_id: str
     video_summary: Summary
+    chapters_ids: list[str] | None = None
     chapters: list[Chapter]
     chapter_summaries: list[Summary]
 
 
-class GenScriptTaskResultElement(BaseModel):
+class VideoScriptTaskResultElement(BaseModel):
     video_id: str
+    chapter_id: str | None = None
     chapter: Chapter
     data: dict
 
 
-class GenScriptTask(BaseModel):
+class VideoScriptTask(BaseModel):
     type: Literal["video_script"] = "video_script"
-    collection: list[GenScriptElement]
+    collection: list[VideoScriptTaskElement]
     remix_s1_prompt: str
     remix_s2_prompt: str
-    references: list[list[GenScriptTaskResultElement]] = []
+    references: list[list[VideoScriptTaskResultElement]] = []
     lang: str = "en"
 
 
-class GenScriptTaskResult(BaseModel):
+class VideoScriptTaskResult(BaseModel):
     type: Literal["video_script"] = "video_script"
-    styles: list[list[GenScriptTaskResultElement]]
+    styles: list[list[VideoScriptTaskResultElement]]
 
 
 class BgmConfig(BaseModel):
@@ -329,7 +331,7 @@ Task = Annotated[
     Union[
         PingTask,
         VideoSummaryTask,
-        GenScriptTask,
+        VideoScriptTask,
         VideoMashupTask,
         VideoConcatTask,
         VideoSnapshotTask,
@@ -344,7 +346,7 @@ TaskResult = Annotated[
     Union[
         PingTaskResult,
         VideoSummaryTaskResult,
-        GenScriptTaskResult,
+        VideoScriptTaskResult,
         VideoMashupTaskResult,
         VideoConcatTaskResult,
         VideoSnapshotTaskResult,
