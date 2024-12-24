@@ -129,6 +129,7 @@ class VideoSummaryTask(BaseModel):
     prompt: str | None = None
     chapter_prompt: str | None = None
     chapters: list[Chapter] | None = None
+    display_lang: str = "en"
 
 
 class VideoSummaryTaskResult(BaseModel):

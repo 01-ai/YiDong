@@ -343,6 +343,7 @@ class YiDong:
         prompt: str | None = None,
         chapter_prompt: str | None = None,
         chapters: list[Chapter] | None = None,
+        display_lang: str = "en",
     ) -> TaskRef[VideoSummaryTask, VideoSummaryTaskResult]:
         """
         Summarize a video with the given video id. By default, the video will be
@@ -353,6 +354,7 @@ class YiDong:
             prompt: The prompt for the video summary. If not set, a builtin prompt will be used here.
             chapter_prompt: The prompt for the chapter summary. If not set, it will be the same as `prompt`.
             chapters: The list of video chapters. If not set, the `chapters` will be extracted automatically.
+            display_lang: the language for selling_points and product name
         """
         return self._submit_task(locals())
 
