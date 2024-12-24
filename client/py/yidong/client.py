@@ -354,7 +354,7 @@ class YiDong:
             prompt: The prompt for the video summary. If not set, a builtin prompt will be used here.
             chapter_prompt: The prompt for the chapter summary. If not set, it will be the same as `prompt`.
             chapters: The list of video chapters. If not set, the `chapters` will be extracted automatically.
-            display_lang: the language for selling_points and product name
+            display_lang: The language for selling_points, product name and so on
         """
         return self._submit_task(locals())
 
@@ -429,7 +429,7 @@ class YiDong:
         mask_base64: str,
         prompt: str | None = None,
     ) -> TaskRef[ImageInpaintTask, ImageInpaintTaskResult]:
-        """image inpaint based on the mask image base64 string and the given prompt."""
+        """Image inpaint based on the mask image base64 string and the given prompt."""
         return self._submit_task(locals())
 
     def image_remove(
@@ -437,7 +437,7 @@ class YiDong:
         image_id: str,
         mask_base64: str,
     ) -> TaskRef[ImageRemoveTask, ImageRemoveTaskResult]:
-        """image remove based on the mask image base64 string."""
+        """Image remove based on the mask image base64 string."""
         return self._submit_task(locals())
 
 
