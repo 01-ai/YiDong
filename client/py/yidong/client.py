@@ -23,6 +23,10 @@ from yidong.model import (
     EditorConfig,
     ImageGenerationTask,
     ImageGenerationTaskResult,
+    ImageInpaintTask,
+    ImageInpaintTaskResult,
+    ImageRemoveTask,
+    ImageRemoveTaskResult,
     Pagination,
     PingTask,
     PingTaskResult,
@@ -415,6 +419,23 @@ class YiDong:
         config: DiffusionConfig = DiffusionConfig(),
     ) -> TaskRef[ImageGenerationTask, ImageGenerationTaskResult]:
         """Generate images based on the given prompt or the reference image."""
+        return self._submit_task(locals())
+
+    def image_inpaint(
+        self,
+        image_id: str,
+        mask_base64: str,
+        prompt: str | None = None,
+    ) -> TaskRef[ImageInpaintTask, ImageInpaintTaskResult]:
+        """image inpaint based on the mask image base64 string and the given prompt."""
+        return self._submit_task(locals())
+
+    def image_remove(
+        self,
+        image_id: str,
+        mask_base64: str,
+    ) -> TaskRef[ImageRemoveTask, ImageRemoveTaskResult]:
+        """image remove based on the mask image base64 string."""
         return self._submit_task(locals())
 
 
