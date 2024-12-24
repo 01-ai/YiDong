@@ -327,6 +327,29 @@ class ImageGenerationTaskResult(BaseModel):
     generated_image_ids: list[str]
 
 
+class ImageInpaintTask(BaseModel):
+    type: Literal["image_inpaint"] = "image_inpaint"
+    image_id: str = Field(..., min_length=1)
+    mask_base64: str = Field(..., min_length=1)
+    prompt: str | None = None
+
+
+class ImageInpaintTaskResult(BaseModel):
+    type: Literal["image_inpaint"] = "image_inpaint"
+    generated_image_ids: list[str]
+
+
+class ImageRemoveTask(BaseModel):
+    type: Literal["image_remove"] = "image_remove"
+    image_id: str = Field(..., min_length=1)
+    mask_base64: str = Field(..., min_length=1)
+
+
+class ImageRemoveTaskResult(BaseModel):
+    type: Literal["image_remove"] = "image_remove"
+    generated_image_ids: list[str]
+
+
 Task = Annotated[
     Union[
         PingTask,
@@ -336,6 +359,8 @@ Task = Annotated[
         VideoConcatTask,
         VideoSnapshotTask,
         ImageGenerationTask,
+        ImageInpaintTask,
+        ImageRemoveTask,
     ],
     Field(discriminator="type"),
 ]
@@ -351,6 +376,8 @@ TaskResult = Annotated[
         VideoConcatTaskResult,
         VideoSnapshotTaskResult,
         ImageGenerationTaskResult,
+        ImageInpaintTaskResult,
+        ImageRemoveTaskResult,
     ],
     Field(discriminator="type"),
 ]
