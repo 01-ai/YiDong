@@ -39,6 +39,8 @@ from yidong.model import (
     TaskInfo,
     VideoConcatTask,
     VideoConcatTaskResult,
+    VideoGenerationTask,
+    VideoGenerationTaskResult,
     VideoMashupTask,
     VideoMashupTaskResult,
     VideoScriptTask,
@@ -333,42 +335,40 @@ class YiDong:
         )
         return TaskRef[task_type, task_result_type](self, res.id)
 
+    def image_generation(
+        self,
+        prompt: str = "",
+        image_id: str = "",
+        config: DiffusionConfig = DiffusionConfig(),
+    ) -> TaskRef[ImageGenerationTask, ImageGenerationTaskResult]:
+        """Generate images based on the given prompt or the reference image."""
+        return self._submit_task(locals())
+
+    def image_inpaint(
+        self,
+        image_id: str,
+        mask_base64: str,
+        prompt: str | None = None,
+    ) -> TaskRef[ImageInpaintTask, ImageInpaintTaskResult]:
+        """Image inpaint based on the mask image base64 string and the given prompt."""
+        return self._submit_task(locals())
+
+    def image_remove(
+        self,
+        image_id: str,
+        mask_base64: str,
+    ) -> TaskRef[ImageRemoveTask, ImageRemoveTaskResult]:
+        """Image remove based on the mask image base64 string."""
+        return self._submit_task(locals())
+
     def ping(self) -> TaskRef[PingTask, PingTaskResult]:
         """A simple task to test the health of the server."""
         return self._submit_task(locals())
 
-    def video_summary(
-        self,
-        video_id: str,
-        prompt: str | None = None,
-        chapter_prompt: str | None = None,
-        chapters: list[Chapter] | None = None,
-        display_lang: str = "en",
-    ) -> TaskRef[VideoSummaryTask, VideoSummaryTaskResult]:
-        """
-        Summarize a video with the given video id. By default, the video will be
-        split into chapters. The summary of each chapter together with the summary of the whole video will be returned.
-
-        Args:
-            video_id: The video id.
-            prompt: The prompt for the video summary. If not set, a builtin prompt will be used here.
-            chapter_prompt: The prompt for the chapter summary. If not set, it will be the same as `prompt`.
-            chapters: The list of video chapters. If not set, the `chapters` will be extracted automatically.
-            display_lang: The language for selling_points, product name and so on
-        """
-        return self._submit_task(locals())
-
-    def video_script(
-        self,
-        collection: list[VideoScriptTaskElement],
-        remix_s1_prompt: str,
-        remix_s2_prompt: str,
-        references: list[list[VideoScriptTaskResultElement]],
-        lang: str = "en",
-    ) -> TaskRef[VideoScriptTask, VideoScriptTaskResult]:
-        """
-        Generate scripts based on a collection of video summarizations.
-        """
+    def video_concat(
+        self, video_ids: list[str], chapters: list[Chapter] = []
+    ) -> TaskRef[VideoConcatTask, VideoConcatTaskResult]:
+        """Concatenate multiple videos into one. If `chapters` are provided, they should be of the same length as `video_ids`."""
         return self._submit_task(locals())
 
     def video_mashup(
@@ -395,10 +395,25 @@ class YiDong:
         """
         return self._submit_task(locals())
 
-    def video_concat(
-        self, video_ids: list[str], chapters: list[Chapter] = []
-    ) -> TaskRef[VideoConcatTask, VideoConcatTaskResult]:
-        """Concatenate multiple videos into one. If `chapters` are provided, they should be of the same length as `video_ids`."""
+    def video_generation(
+        self,
+        prompt: str | None = None,
+        image_id: str = "",
+    ) -> TaskRef[VideoGenerationTask, VideoGenerationTaskResult]:
+        """Generate video based on the given prompt and the reference image."""
+        return self._submit_task(locals())
+
+    def video_script(
+        self,
+        collection: list[VideoScriptTaskElement],
+        remix_s1_prompt: str,
+        remix_s2_prompt: str,
+        references: list[list[VideoScriptTaskResultElement]],
+        lang: str = "en",
+    ) -> TaskRef[VideoScriptTask, VideoScriptTaskResult]:
+        """
+        Generate scripts based on a collection of video summarizations.
+        """
         return self._submit_task(locals())
 
     def video_snapshot(
@@ -414,30 +429,25 @@ class YiDong:
         """
         return self._submit_task(locals())
 
-    def image_generation(
+    def video_summary(
         self,
-        prompt: str = "",
-        image_id: str = "",
-        config: DiffusionConfig = DiffusionConfig(),
-    ) -> TaskRef[ImageGenerationTask, ImageGenerationTaskResult]:
-        """Generate images based on the given prompt or the reference image."""
-        return self._submit_task(locals())
-
-    def image_inpaint(
-        self,
-        image_id: str,
-        mask_base64: str,
+        video_id: str,
         prompt: str | None = None,
-    ) -> TaskRef[ImageInpaintTask, ImageInpaintTaskResult]:
-        """Image inpaint based on the mask image base64 string and the given prompt."""
-        return self._submit_task(locals())
+        chapter_prompt: str | None = None,
+        chapters: list[Chapter] | None = None,
+        display_lang: str = "en",
+    ) -> TaskRef[VideoSummaryTask, VideoSummaryTaskResult]:
+        """
+        Summarize a video with the given video id. By default, the video will be
+        split into chapters. The summary of each chapter together with the summary of the whole video will be returned.
 
-    def image_remove(
-        self,
-        image_id: str,
-        mask_base64: str,
-    ) -> TaskRef[ImageRemoveTask, ImageRemoveTaskResult]:
-        """Image remove based on the mask image base64 string."""
+        Args:
+            video_id: The video id.
+            prompt: The prompt for the video summary. If not set, a builtin prompt will be used here.
+            chapter_prompt: The prompt for the chapter summary. If not set, it will be the same as `prompt`.
+            chapters: The list of video chapters. If not set, the `chapters` will be extracted automatically.
+            display_lang: The language for selling_points, product name and so on
+        """
         return self._submit_task(locals())
 
 
