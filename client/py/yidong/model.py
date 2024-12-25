@@ -123,6 +123,17 @@ class PingTaskResult(BaseModel):
     type: Literal["ping"] = "ping"
 
 
+class VideoGenerationTask(BaseModel):
+    type: Literal["video_generation"] = "video_generation"
+    image_id: str = ""
+    prompt: str | None = None
+
+
+class VideoGenerationTaskResult(BaseModel):
+    type: Literal["video_generation"] = "video_generation"
+    video_ids: list[str]
+
+
 class VideoSummaryTask(BaseModel):
     type: Literal["video_summary"] = "video_summary"
     video_id: str
@@ -354,6 +365,7 @@ class ImageRemoveTaskResult(BaseModel):
 Task = Annotated[
     Union[
         PingTask,
+        VideoGenerationTask,
         VideoSummaryTask,
         VideoScriptTask,
         VideoMashupTask,
@@ -371,6 +383,7 @@ TaskType = TypeVar("TaskType", bound=Task)
 TaskResult = Annotated[
     Union[
         PingTaskResult,
+        VideoGenerationTaskResult,
         VideoSummaryTaskResult,
         VideoScriptTaskResult,
         VideoMashupTaskResult,
