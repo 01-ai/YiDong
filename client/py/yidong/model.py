@@ -209,7 +209,8 @@ class VoiceoverEditorConfig(BaseModel):
     style: str = "0"
     highlight_color: str = ""
     stroke_color: str = ""
-    mask_color: str = ""
+    mask_type: str = "roll_mask"
+    mask_color: str = "#800080"
 
 
 class TextoverEditorConfig(BaseModel):
