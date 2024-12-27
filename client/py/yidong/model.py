@@ -252,6 +252,7 @@ class VideoEditorConfig(BaseModel):
 
 class TransitionEditorConfig(BaseModel):
     style: str = ""
+    duration: float = 0.5
 
 
 class ChapterEditorConfig(BaseModel):
