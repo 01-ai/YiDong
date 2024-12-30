@@ -188,6 +188,8 @@ class BgmConfig(BaseModel):
 
 class GlobalEditorConfig(BaseModel):
     bgm_config: BgmConfig = BgmConfig()
+    output_width: float | None = None
+    output_height: float | None = None
 
 
 class AudioEditorConfig(BaseModel):
@@ -204,8 +206,8 @@ class VoiceoverEditorConfig(BaseModel):
     font_color: str = ""
     font_weight: str = ""
     lang: str = ""
-    position_x: float = 0.0
-    position_y: float = 0.0
+    position_x: float | None = None
+    position_y: float | None = None
     style: str = "0"
     highlight_color: str = ""
     stroke_color: str = ""
