@@ -1,5 +1,4 @@
 from enum import Enum, StrEnum
-from pickle import NONE
 from typing import Annotated, Generic, Literal, TypeVar, Union
 
 from pydantic import BaseModel, Field
