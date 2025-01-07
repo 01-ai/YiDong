@@ -183,7 +183,7 @@ class VideoScriptTaskResult(BaseModel):
 
 class BgmConfig(BaseModel):
     resource_id: str = ""
-    volume: float = 0.0
+    volume: float = 1
 
 
 class GlobalEditorConfig(BaseModel):
@@ -196,7 +196,7 @@ class AudioEditorConfig(BaseModel):
     resource_id: str = ""
     start: float = 0.0
     speed: float = 1.0
-    volume: float = 25
+    volume: float = 1
 
 
 class EffectBase(BaseModel):
