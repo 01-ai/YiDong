@@ -205,18 +205,15 @@ class EffectBase(BaseModel):
 
 
 class FontBase(BaseModel):
+    text: str = ""
     font: str = ""
     font_size: int = 0
     font_color: str = ""
     font_weight: str = ""
 
 
-class TextFontBase(FontBase):
-    text: str = ""
+class VoiceoverEditorConfig(FontBase):
     display: bool = True
-
-
-class VoiceoverEditorConfig(TextFontBase):
     position_x: float | None = None
     position_y: float | None = None
     stroke_color: str = ""
@@ -224,7 +221,7 @@ class VoiceoverEditorConfig(TextFontBase):
     mask_color: str = "#800080"
 
 
-class TextoverEditorConfig(TextFontBase):
+class TextoverEditorConfig(FontBase):
     rotate: float = 0.0
     position_x: float | None = None
     position_y: float | None = None
