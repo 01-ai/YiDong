@@ -1,5 +1,5 @@
 from enum import Enum, StrEnum
-from typing import Annotated, Generic, Literal, TypeVar, Union
+from typing import Annotated, Generic, Literal, List, TypeVar, Union
 
 from pydantic import BaseModel, Field
 
@@ -199,38 +199,41 @@ class AudioEditorConfig(BaseModel):
     volume: float = 25
 
 
-class VoiceoverEditorConfig(BaseModel):
-    text: str = ""
+class EffectBase(BaseModel):
+    style: str = ""
+    duration: float = 0.5
+
+
+class FontBase(BaseModel):
     font: str = ""
     font_size: int = 0
     font_color: str = ""
     font_weight: str = ""
-    lang: str = ""
+
+
+class TextFontBase(FontBase):
+    text: str = ""
+    display: bool = True
+
+
+class VoiceoverEditorConfig(TextFontBase):
     position_x: float | None = None
     position_y: float | None = None
-    style: str = "0"
-    highlight_color: str = ""
     stroke_color: str = ""
     mask_type: str = "roll_mask"
     mask_color: str = "#800080"
 
 
-class TextoverEditorConfig(BaseModel):
-    text: str = ""
-    font: str = ""
-    font_size: int = 0
-    font_color: str = ""
-    font_weight: str = ""
-    lang: str = ""
-    position: str = "bottom"
-    style: str = "0"
-    max_lines: int = 3
-    highlight_color: str = ""
+class TextoverEditorConfig(TextFontBase):
+    rotate: float = 0.0
+    position_x: float | None = None
+    position_y: float | None = None
     stroke_color: str = ""
-    mask_color: str = ""
-    effect_in: str = ""
-    effect_out: str = ""
-    effect_bubble: str = ""
+    style: str = "no_effect"
+    style_value: str = ""
+    in_effect: EffectBase = EffectBase()
+    on_effect: EffectBase = EffectBase()
+    out_effect: EffectBase = EffectBase()
 
 
 class ImageEditorConfig(BaseModel):
@@ -238,10 +241,11 @@ class ImageEditorConfig(BaseModel):
     start: float = 0.0
     stop: float = 0.0
     scale: float = 1.0
-    position_x: float = 1.0
-    position_y: float = 1.0
+    position_x: float = 0
+    position_y: float = 1
     rotate: float = 0.0
-    animation: str = ""
+    in_effect: EffectBase = EffectBase()
+    out_effect: EffectBase = EffectBase()
 
 
 class VideoEditorConfig(BaseModel):
@@ -262,8 +266,8 @@ class ChapterEditorConfig(BaseModel):
     key: str = ""
     audio: AudioEditorConfig = AudioEditorConfig()
     voiceover: VoiceoverEditorConfig = VoiceoverEditorConfig()
-    textover: TextoverEditorConfig = TextoverEditorConfig()
-    image: ImageEditorConfig = ImageEditorConfig()
+    textovers: List[TextoverEditorConfig] = []
+    images: List[ImageEditorConfig] = []
     video: VideoEditorConfig = VideoEditorConfig()
     transition: TransitionEditorConfig = TransitionEditorConfig()
 
