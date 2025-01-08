@@ -214,8 +214,8 @@ class FontBase(BaseModel):
 
 class VoiceoverEditorConfig(FontBase):
     display: bool = True
-    position_x: float | None = None
-    position_y: float | None = None
+    position_x: float = 0
+    position_y: float = 1
     stroke_color: str = ""
     mask_type: str = "roll_mask"
     mask_color: str = "#800080"
