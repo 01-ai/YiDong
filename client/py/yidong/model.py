@@ -223,8 +223,8 @@ class VoiceoverEditorConfig(FontBase):
 
 class TextoverEditorConfig(FontBase):
     rotate: float = 0.0
-    position_x: float | None = None
-    position_y: float | None = None
+    position_x: float = 0
+    position_y: float = -1
     stroke_color: str = ""
     style: str = "no_effect"
     style_value: str = ""
@@ -239,7 +239,7 @@ class ImageEditorConfig(BaseModel):
     stop: float = 0.0
     scale: float = 1.0
     position_x: float = 0
-    position_y: float = 1
+    position_y: float = -1
     rotate: float = 0.0
     in_effect: EffectBase = EffectBase()
     out_effect: EffectBase = EffectBase()
