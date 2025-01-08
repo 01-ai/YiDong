@@ -216,6 +216,7 @@ class VoiceoverEditorConfig(FontBase):
     display: bool = True
     position_x: float = 0
     position_y: float = 1
+    style: str = "mask"
     stroke_color: str = ""
     mask_type: str = "roll_mask"
     mask_color: str = "#800080"
@@ -226,7 +227,9 @@ class TextoverEditorConfig(FontBase):
     position_x: float = 0
     position_y: float = -1
     stroke_color: str = ""
-    style: str = "no_effect"
+    mask_type: str = "no_effect"
+    mask_color: str = ""
+    style: str = "mask"
     style_value: str = ""
     in_effect: EffectBase = EffectBase()
     on_effect: EffectBase = EffectBase()
