@@ -188,6 +188,7 @@ class BgmConfig(BaseModel):
 
 class GlobalEditorConfig(BaseModel):
     bgm_config: BgmConfig = BgmConfig()
+    video_fill_effect: str = "black_border"
     output_width: float | None = None
     output_height: float | None = None
 
@@ -202,6 +203,12 @@ class AudioEditorConfig(BaseModel):
 class EffectBase(BaseModel):
     style: str = ""
     duration: float = 0.5
+
+
+class EffectConfig(BaseModel):
+    in_effect: EffectBase = EffectBase()
+    on_effect: EffectBase = EffectBase()
+    out_effect: EffectBase = EffectBase()
 
 
 class FontBase(BaseModel):
@@ -222,7 +229,7 @@ class VoiceoverEditorConfig(FontBase):
     mask_color: str = "#800080"
 
 
-class TextoverEditorConfig(FontBase):
+class TextoverEditorConfig(FontBase, EffectConfig):
     rotate: float = 0.0
     position_x: float = 0
     position_y: float = -1
@@ -231,12 +238,9 @@ class TextoverEditorConfig(FontBase):
     mask_color: str = ""
     style: str = "mask"
     style_value: str = ""
-    in_effect: EffectBase = EffectBase()
-    on_effect: EffectBase = EffectBase()
-    out_effect: EffectBase = EffectBase()
 
 
-class ImageEditorConfig(BaseModel):
+class ImageEditorConfig(EffectConfig):
     resource_id: str = ""
     start: float = 0.0
     stop: float = 0.0
@@ -244,8 +248,6 @@ class ImageEditorConfig(BaseModel):
     position_x: float = 0
     position_y: float = -1
     rotate: float = 0.0
-    in_effect: EffectBase = EffectBase()
-    out_effect: EffectBase = EffectBase()
 
 
 class VideoEditorConfig(BaseModel):
