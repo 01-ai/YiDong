@@ -236,8 +236,7 @@ class TextoverEditorConfig(FontBase, EffectConfig):
     stroke_color: str = ""
     mask_type: str = "no_effect"
     mask_color: str = ""
-    style: str = "mask"
-    style_value: str = ""
+    mask_meta: dict = {}
 
 
 class ImageEditorConfig(EffectConfig):
