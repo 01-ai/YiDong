@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yidong"
-version = "0.0.20"
+version = "0.0.21"
 description = ""
 authors = ["Yi Team <yi@01.ai>"]
 license = "MIT"
