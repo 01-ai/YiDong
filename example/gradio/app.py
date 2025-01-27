@@ -26,7 +26,7 @@ with gr.Blocks() as clip_service:
     with gr.Row():
         login_button = gr.LoginButton()
         user_email_display = gr.Textbox(
-            label="In order to get your user key, please click on huggingface login, the first time you login you will have the full key, please save it. After that your key will be hidden.",
+            label="In order to get your user key, please click on Hugging Face login, the first time you login you will have the full key, please save it. After that your key will be hidden.",
             interactive=True,
         )
         clip_service.load(get_user_email, inputs=None, outputs=user_email_display)
